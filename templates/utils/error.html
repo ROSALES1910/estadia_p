@@ -1,0 +1,13 @@
+{% extends "layout/base.html" %}
+
+{% block contenido %}
+  <div class="dashboard-wrapper">
+    <main class="dashboard-main">
+      <div class="dashboard-body">
+        <h2>Error</h2>
+        <p>{{ error }}</p>
+        <a href="{{ url_for('dashboard') }}">Volver al dashboard</a>
+      </div>
+    </main>
+  </div>
+{% endblock %}

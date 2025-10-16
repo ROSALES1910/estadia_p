@@ -1,0 +1,44 @@
+{% extends "layout/base.html" %}
+
+{% block contenido %}
+<div class="dashboard-wrapper">
+  <main class="dashboard-main">
+    <div class="dashboard-header">
+      <h2>Asignar/Cambiar proyecto al alumno</h2>
+    </div>
+
+    <div class="dashboard-body">
+      <form method="post" action="/alumnos/asignar_proyecto" class="formulario-alumno">
+        <fieldset>
+          <legend>Seleccionar alumno</legend>
+          <label for="alumno">Alumno:</label>
+          <select name="alumno" id="alumno" required>
+            <option value="">Seleccione un alumno</option>
+            {% for alumno in alumnos %}
+              <option value="{{ alumno.matricula }}">{{ alumno.nombre }}</option>
+            {% endfor %}
+          </select>
+        </fieldset>
+
+        <fieldset>
+          <legend>Datos del proyecto</legend>
+          <label for="proyecto">Nombre del proyecto:</label>
+          <select name="proyecto" id="proyecto" required>
+            <option value="">Seleccione un proyecto</option>
+            {% for proyecto in proyectos %}
+              <option value="{{ proyecto.nombre }}">{{ proyecto.nombre }}</option>
+            {% endfor %}
+          </select>
+
+          <label for="descripcion">Descripción:</label>
+          <textarea name="descripcion" id="descripcion" rows="4"></textarea>
+        </fieldset>
+
+        <div class="form-actions">
+          <button type="submit">Asignar proyecto</button>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+{% endblock %}

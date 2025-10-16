@@ -1,0 +1,167 @@
+{% extends "layout/base.html" %}
+
+{% block contenido %}
+<div class="dashboard-wrapper">
+  <!-- Sidebar institucional -->
+  <aside class="sidebar">
+  <ul class="sidebar-menu">
+    <!-- Alumnos -->
+    <li>
+      <a href="#" class="menu-principal" onclick="toggleSubmenu('submenu-alumnos')">Alumnos</a>
+      <ul class="submenu" id="submenu-alumnos" hidden>
+        <li><a href="/alumnos/registrar">Registrar nuevo alumno</a></li>
+        <li><a href="/alumnos/activar">Activar/Inactivar alumno</a></li>
+        <li><a href="/alumnos/modificar">Modificar datos del alumno</a></li>
+        <li><a href="/alumnos/asignar_proyecto">Asignar/Cambiar proyecto al alumno</a></li>
+        <li><a href="/alumnos/desasignar_proyecto">Desasignar proyecto al alumno</a></li>
+        <li><a href="/alumnos/modificar_contrasena">Cambiar contraseña al alumno</a></li>
+        <li><a href="/alumnos/asignar_horario">Asignar/Cambiar horario al alumno</a></li>
+        <li><a href="/alumnos/horario">Horario alumno</a></li>
+        <li><a href="/alumnos/comentarios">Histórico de comentarios del alumno</a></li>
+        <li><a href="/alumnos/log">Log del alumno</a></li>
+        <li><a href="/alumnos/eliminar">Eliminar alumno</a></li>
+        <li><a href="/alumnos/consulta">Consulta de alumnos</a></li>
+      </ul>
+    </li>
+
+    <!-- Instituciones -->
+    <li>
+      <a href="#" class="menu-principal" onclick="toggleSubmenu('submenu-instituciones')">Instituciones</a>
+      <ul class="submenu" id="submenu-instituciones" hidden>
+        <li><a href="/instituciones/registrar">Registrar nueva institución</a></li>
+        <li><a href="/instituciones/modificar">Modificar institución</a></li>
+        <li><a href="/instituciones/eliminar">Eliminar institución</a></li>
+        <li><a href="/instituciones/consulta">Consultar instituciones</a></li>
+      </ul>
+    </li>
+
+    <!-- Proyectos -->
+    <li>
+      <a href="#" class="menu-principal" onclick="toggleSubmenu('submenu-proyectos')">Proyectos</a>
+      <ul class="submenu" id="submenu-proyectos" hidden>
+        <li><a href="/proyectos/registrar">Registrar nuevo proyecto</a></li>
+        <li><a href="/proyectos/modificar">Modificar datos del proyecto</a></li>
+        <li><a href="/proyectos/terminar">Terminar proyecto</a></li>
+        <li><a href="/proyectos/consulta">Consulta de proyectos</a></li>
+      </ul>
+    </li>
+
+    <!-- Asistencia -->
+    <li>
+      <a href="#" class="menu-principal" onclick="toggleSubmenu('submenu-asistencia')">Asistencia</a>
+      <ul class="submenu" id="submenu-asistencia" hidden>
+        <li><a href="/asistencia/consulta">Consultar asistencia del alumno</a></li>
+        <li><a href="/asistencia/incidencias">Incidencias</a></li>
+      </ul>
+    </li>
+
+    <!-- Documentos -->
+    <li>
+      <a href="#" class="menu-principal" onclick="toggleSubmenu('submenu-documentos')">Documentos</a>
+      <ul class="submenu" id="submenu-documentos" hidden>
+        <li><a href="/documentos/aceptacion">Carta de aceptación</a></li>
+        <li><a href="/documentos/terminacion">Carta de terminación</a></li>
+        <li><a href="/documentos/horas">Constancia de horas</a></li>
+      </ul>
+    </li>
+
+    <!-- Perfil -->
+    <li>
+      <a href="/perfil" class="menu-principal">Perfil</a>
+      <ul class = "submenu" id="submenu-perfil" hidden>
+        <li><a href="/perfil/modificar">Modificar perfil</a></li>
+        <li><a href="/dashboard/login.html">Cerrar sesión</a></li>
+      </ul>
+    </li>
+  </ul>
+</aside>
+
+  <!-- Área principal con formulario -->
+  <main class="dashboard-main">
+    <div class="dashboard-header">
+      <button class="logout-button">⏻</button>
+    </div>
+
+    <div class="dashboard-body">
+      <h2>Registro de Alumno</h2>
+
+      <form id="form-alumno" method="post" action="/alumnos/registrar" class="formulario-alumno">
+        <div class="form-secciones">
+          <!-- Columna izquierda -->
+          <fieldset>
+            <legend>Datos personales</legend>
+
+            <label for="nombre">Nombre:</label>
+            <input type="text" name="nombre" id="nombre">
+
+            <label for="apellido_paterno">Apellido Paterno:</label>
+            <input type="text" name="apellido_paterno" id="apellido_paterno">
+
+            <label for="apellido_materno">Apellido Materno:</label>
+            <input type="text" name="apellido_materno" id="apellido_materno">
+
+            <label for="matricula">Matrícula o número de control:</label>
+            <input type="text" name="matricula" id="matricula">
+
+            <label for="telefono">Teléfono:</label>
+            <input type="tel" name="telefono" id="telefono">
+
+            <label for="email">E-mail:</label>
+            <input type="email" name="email" id="email">
+          </fieldset>
+
+          <!-- Columna derecha -->
+          <fieldset>
+            <legend>Datos académicos</legend>
+
+            <label for="escolaridad">Escolaridad:</label>
+            <select name="escolaridad" id="escolaridad">
+              <option value="bachillerato">Bachillerato</option>
+              <option value="licenciatura">Licenciatura</option>
+              <option value="posgrado">Posgrado</option>
+            </select>
+
+            <label for="semestre">Semestre:</label>
+            <input type="text" name="semestre" id="semestre">
+
+            <label for="institucion">Institución:</label>
+            <select name="institucion" id="institucion">
+              <option value="">Selecciona una institución</option>
+              <option value="gomez">Gómez Morin</option>
+              <option value="otra">Otra institución</option>
+            </select>
+            <a href="/instituciones/otra">Otra institución</a>
+
+            <label for="carrera">Carrera:</label>
+            <input type="text" name="carrera" id="carrera">
+
+            <label for="documentacion">Documentación:</label>
+            <select name="documentacion" id="documentacion">
+              <option value="incompleta">Incompleta</option>
+              <option value="completa">Completa</option>
+            </select>
+          </fieldset>
+        </div>
+
+        <!-- Comentarios -->
+        <div class="form-full">
+          <label for="comentarios">Comentarios:</label>
+          <textarea name="comentarios" id="comentarios"></textarea>
+        </div>
+
+        <!-- Botón -->
+        <div class="form-actions">
+          <button type="submit">Registrar</button>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+
+<script>
+function toggleSubmenu(id) {
+  const submenu = document.getElementById(id);
+  submenu.hidden = !submenu.hidden;
+}
+</script>
+{% endblock %}

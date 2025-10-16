@@ -1,0 +1,43 @@
+{% extends "layout/base.html" %}
+
+{% block contenido %}
+<div class="dashboard-wrapper">
+  <aside class="sidebar">
+    <!-- Tu menú lateral completo -->
+  </aside>
+
+  <main class="dashboard-main">
+    <div class="dashboard-header">
+      <button class="logout-button">⏻</button>
+    </div>
+
+    <div class="dashboard-body">
+      <h2>Desasignar proyecto</h2>
+
+      <form method="post" action="/alumnos/desasignar_proyecto" class="formulario-alumno">
+        <fieldset>
+          <legend>Seleccionar alumno</legend>
+          <label for="alumno">Alumno:</label>
+          <select name="alumno" id="alumno" required>
+            <option value="">Seleccione un alumno...</option>
+            {% for alumno in alumnos %}
+              <option value="{{ alumno.matricula }}">{{ alumno.nombre }}</option>
+            {% endfor %}
+          </select>
+        </fieldset>
+
+        <div class="form-actions">
+          <button type="submit">Desasignar proyecto</button>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+
+<script>
+function toggleSubmenu(id) {
+  const submenu = document.getElementById(id);
+  submenu.hidden = !submenu.hidden;
+}
+</script>
+{% endblock %}

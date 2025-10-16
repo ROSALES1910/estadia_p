@@ -1,0 +1,22 @@
+{% extends "layout/base.html" %}
+
+{% block contenido %}
+<div class="login-container">
+  <div class="login-box">
+    <h2 class="login-title">Login</h2>
+    <form method="post" action="/login">
+      <label for="usuario">Usuario:</label>
+      <input type="text" name="usuario" id="usuario" required class="login-input">
+
+      <label for="contrasena">Contraseña:</label>
+      <input type="password" name="contrasena" id="contrasena" required class="login-input">
+
+      <button type="submit" class="login-button">Entrar</button>
+    </form>
+
+    {% if error %}
+      <p class="login-error">{{ error }}</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

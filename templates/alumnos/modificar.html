@@ -1,0 +1,78 @@
+{% extends "layout/base.html" %}
+
+{% block contenido %}
+<div class="dashboard-wrapper">
+  <main class="dashboard-main">
+    <div class="dashboard-header">
+      <h2>Modificar datos del alumno</h2>
+    </div>
+
+    <div class="dashboard-body">
+      <form method="post" action="/alumnos/modificar" class="formulario-alumno">
+        <fieldset>
+          <legend>Seleccionar alumno</legend>
+          <label for="alumno">Alumno:</label>
+          <select name="alumno" id="alumno" required>
+            <option value="">Selecciona un alumno</option>
+            {% for alumno in alumnos %}
+              <option value="{{ alumno._id }}">{{ alumno.nombre }}</option>
+            {% endfor %}
+          </select>
+        </fieldset>
+
+        <div class="form-secciones">
+          <fieldset>
+            <legend>Datos personales</legend>
+            <label for="nombre">Nombre:</label>
+            <input type="text" name="nombre" id="nombre">
+
+            <label for="apellido_paterno">Apellido Paterno:</label>
+            <input type="text" name="apellido_paterno" id="apellido_paterno">
+
+            <label for="apellido_materno">Apellido Materno:</label>
+            <input type="text" name="apellido_materno" id="apellido_materno">
+
+            <label for="telefono">Teléfono:</label>
+            <input type="tel" name="telefono" id="telefono">
+
+            <label for="email">E-mail:</label>
+            <input type="email" name="email" id="email">
+          </fieldset>
+
+          <fieldset>
+            <legend>Datos académicos</legend>
+            <label for="matricula">Matrícula:</label>
+            <input type="text" name="matricula" id="matricula">
+
+            <label for="escolaridad">Escolaridad:</label>
+            <select name="escolaridad" id="escolaridad">
+              <option value="">Selecciona</option>
+              <option value="Bachillerato">Bachillerato</option>
+              <option value="Licenciatura">Licenciatura</option>
+              <option value="Posgrado">Posgrado</option>
+            </select>
+
+            <label for="semestre">Semestre:</label>
+            <input type="text" name="semestre" id="semestre">
+
+            <label for="institucion">Institución:</label>
+            <input type="text" name="institucion" id="institucion">
+
+            <label for="carrera">Carrera:</label>
+            <input type="text" name="carrera" id="carrera">
+          </fieldset>
+        </div>
+
+        <div class="form-full">
+          <label for="comentarios">Comentarios:</label>
+          <textarea name="comentarios" id="comentarios"></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit">Guardar cambios</button>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+{% endblock %}
