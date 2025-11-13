@@ -1,4 +1,14 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import (
+    Flask,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    session,
+    flash,
+    jsonify  # ✅ Necesario para responder con JSON en rutas AJAX
+)
+
 from bson import ObjectId  # Para trabajar con _id en MongoDB
 from datetime import datetime  # Para registrar logs o timestamps si lo necesitas
 
@@ -19,7 +29,6 @@ from models import (
 )
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
-
 # ========== DASHBOARD ==========
 @app.route('/')
 @app.route('/dashboard')
@@ -345,6 +354,7 @@ def log_alumno():
             "nombre": alumno["nombre"].strip()
         })
 
+    # Procesamiento del formulario
     if request.method == 'POST':
         matricula = request.form.get('alumno')
         if not matricula:
@@ -352,6 +362,16 @@ def log_alumno():
         else:
             alumno = alumnos_col.find_one({"matricula": matricula})
             if alumno:
+                # Registro de la acción en la colección logs
+                logs_col.insert_one({
+                    "matricula": matricula,
+                    "nombre": alumno.get("nombre", ""),
+                    "accion": "Consulta de perfil",
+                    "fecha": datetime.now(),
+                    "usuario": session.get("usuario", "sistema")
+                })
+
+                # Construcción del resumen
                 resumen["datos"] = {
                     "matricula": alumno.get("matricula"),
                     "nombre": alumno.get("nombre"),
@@ -387,6 +407,7 @@ def log_alumno():
                            registros=registros,
                            mensaje=mensaje,
                            error=error)
+
     
 @app.route('/alumnos/eliminar', methods=['GET', 'POST'])
 def eliminar_alumno():
@@ -396,31 +417,37 @@ def eliminar_alumno():
     alumnos = list(alumnos_col.find({}, {"_id": 0, "matricula": 1, "nombre": 1}))
     return render_template('alumnos/eliminar.html', alumnos=alumnos)
 
-@app.route('/alumnos/consulta', methods=['GET', 'POST'])
+@app.route('/alumnos/consulta', methods=['GET'])
 def consulta_alumnos():
     proyectos = list(proyectos_col.find({}, {"_id": 0, "id": 1, "nombre": 1}))
     instituciones = list(instituciones_col.find({}, {"_id": 0, "id": 1, "nombre": 1}))
+    alumnos = list(alumnos_col.find({}, {"_id": 0, "matricula": 1, "nombre": 1, "apellido_paterno": 1, "apellido_materno": 1}))
     areas = ["Administrativa", "Técnica", "Social"]
     tipos_servicio = ["Prácticas", "Servicio social", "Residencia"]
     documentacion = ["Completa", "Incompleta", "No entregada"]
     estados = ["Activo", "Inactivo", "Finalizado"]
 
-    if request.method == 'POST':
-        filtros = {k: v for k, v in request.form.items() if v}
-        alumnos = list(alumnos_col.find(filtros))
-        return render_template('alumnos/consulta_resultados.html', alumnos=alumnos)
+    return render_template('alumnos/consulta_alumnos.html',
+                           proyectos=proyectos,
+                           instituciones=instituciones,
+                           alumnos=alumnos,
+                           areas=areas,
+                           tipos_servicio=tipos_servicio,
+                           documentacion=documentacion,
+                           estados=estados)
 
-    return render_template('alumnos/consulta.html', proyectos=proyectos, instituciones=instituciones,
-                           areas=areas, tipos_servicio=tipos_servicio,
-                           documentacion=documentacion, estados=estados)
- 
+@app.route('/api/alumnos/datos', methods=['GET'])
+def obtener_datos_alumno():
+    matricula = request.args.get('matricula', '').strip()
 
-    # Mostrar todos los alumnos que tengan el campo 'proyecto' definido
-    alumnos = list(alumnos_col.find(
-        {"proyecto": {"$exists": True}},
-        {"_id": 0, "matricula": 1, "nombre": 1}
-    ))
-    return render_template('alumnos/desasignar_proyecto.html', alumnos=alumnos)
+    try:
+        matricula = int(matricula)
+    except ValueError:
+        return jsonify({})
+
+    alumno = alumnos_col.find_one({"matricula": matricula}, {"_id": 0})
+    return jsonify(alumno if alumno else {})
+
 # ========== ASISTENCIA ==========
 @app.route('/asistencia/consulta', methods=['GET', 'POST'])
 def consulta_asistencia():

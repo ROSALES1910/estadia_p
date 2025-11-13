@@ -1,0 +1,55 @@
+{% extends "layout/base.html" %}
+
+{% block contenido %}
+<div class="dashboard-wrapper">
+  <main class="dashboard-main">
+    <div class="dashboard-body">
+      <h2>Resultados de la consulta</h2>
+
+      {% if alumnos %}
+        <table class="tabla-resultados">
+          <thead>
+            <tr>
+              <th>Nombre completo</th>
+              <th>Matrícula</th>
+              <th>Correo</th>
+              <th>Teléfono</th>
+              <th>Estado</th>
+              <th>Proyecto</th>
+              <th>Institución</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for a in alumnos %}
+              <tr>
+                <td>
+                  {{ a.nombre | default('') }}
+                  {{ a.apellido_paterno | default('') }}
+                  {{ a.apellido_materno | default('') }}
+                </td>
+                <td>{{ a.matricula | default('') }}</td>
+                <td>{{ a.correo | default('') }}</td>
+                <td>{{ a.telefono | default('') }}</td>
+                <td>{{ a.estado | default('') }}</td>
+                <td>{{ a.proyecto | default('') }}</td>
+                <td>{{ a.institucion | default('') }}</td>
+                <td>
+                  <a href="/alumnos/modificar?matricula={{ a.matricula }}">✎ Modificar</a> |
+                  <a href="/alumnos/log?matricula={{ a.matricula }}">📄 Log</a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p>No se encontraron alumnos con los filtros seleccionados.</p>
+      {% endif %}
+
+      <div class="form-actions">
+        <a href="/alumnos/consulta" class="boton-volver">← Nueva consulta</a>
+      </div>
+    </div>
+  </main>
+</div>
+{% endblock %}
