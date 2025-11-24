@@ -1,10 +1,66 @@
 {% extends "layout/base.html" %}
 
 {% block contenido %}
+<style>
+  .busqueda-container {
+    margin-bottom: 1rem;
+  }
+  #resultados {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0;
+    border: 1px solid #ccc;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  #resultados li {
+    padding: 0.5rem;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+  }
+  #resultados li:hover {
+    background-color: #f0f0f0;
+  }
+  .form-actions {
+    margin-top: 1rem;
+    display: flex;
+    gap: 1rem;
+  }
+  .btn-regresar {
+    background-color: #555;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+  }
+  .btn-regresar:hover {
+    background-color: #333;
+  }
+  .acciones-alumno ul {
+    list-style: none;
+    padding: 0;
+  }
+  .acciones-alumno li {
+    margin: 0.5rem 0;
+  }
+  .acciones-alumno a {
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .acciones-alumno a:hover {
+    color: #0056b3;
+  }
+</style>
+
 <div class="dashboard-wrapper">
-  <!-- Menú lateral -->
+  <!-- Menú lateral institucional completo -->
   <aside class="sidebar">
     <ul class="sidebar-menu">
+      <!-- Alumnos -->
       <li>
         <a href="#" class="menu-principal" onclick="toggleSubmenu('submenu-alumnos')">Alumnos</a>
         <ul class="submenu" id="submenu-alumnos" hidden>
@@ -22,6 +78,56 @@
           <li><a href="/alumnos/consulta" class="activo">Consulta de alumnos</a></li>
         </ul>
       </li>
+
+      <!-- Instituciones -->
+      <li>
+        <a href="#" class="menu-principal" onclick="toggleSubmenu('submenu-instituciones')">Instituciones</a>
+        <ul class="submenu" id="submenu-instituciones" hidden>
+          <li><a href="/instituciones/registrar">Registrar nueva institución</a></li>
+          <li><a href="/instituciones/modificar">Modificar institución</a></li>
+          <li><a href="/instituciones/eliminar">Eliminar institución</a></li>
+          <li><a href="/instituciones/consulta">Consultar instituciones</a></li>
+        </ul>
+      </li>
+
+      <!-- Proyectos -->
+      <li>
+        <a href="#" class="menu-principal" onclick="toggleSubmenu('submenu-proyectos')">Proyectos</a>
+        <ul class="submenu" id="submenu-proyectos" hidden>
+          <li><a href="/proyectos/registrar">Registrar nuevo proyecto</a></li>
+          <li><a href="/proyectos/modificar">Modificar datos del proyecto</a></li>
+          <li><a href="/proyectos/terminar">Terminar proyecto</a></li>
+          <li><a href="/proyectos/consulta">Consulta de proyectos</a></li>
+        </ul>
+      </li>
+
+      <!-- Asistencia -->
+      <li>
+        <a href="#" class="menu-principal" onclick="toggleSubmenu('submenu-asistencia')">Asistencia</a>
+        <ul class="submenu" id="submenu-asistencia" hidden>
+          <li><a href="/asistencia/consulta">Consultar asistencia del alumno</a></li>
+          <li><a href="/asistencia/incidencias">Incidencias</a></li>
+        </ul>
+      </li>
+
+      <!-- Documentos -->
+      <li>
+        <a href="#" class="menu-principal" onclick="toggleSubmenu('submenu-documentos')">Documentos</a>
+        <ul class="submenu" id="submenu-documentos" hidden>
+          <li><a href="/documentos/aceptacion">Carta de aceptación</a></li>
+          <li><a href="/documentos/terminacion">Carta de terminación</a></li>
+          <li><a href="/documentos/horas">Constancia de horas</a></li>
+        </ul>
+      </li>
+
+      <!-- Perfil -->
+      <li>
+        <a href="#" class="menu-principal" onclick="toggleSubmenu('submenu-perfil')">Perfil</a>
+        <ul class="submenu" id="submenu-perfil" hidden>
+          <li><a href="/perfil/modificar">Modificar perfil</a></li>
+          <li><a href="/dashboard/login.html">Cerrar sesión</a></li>
+        </ul>
+      </li>
     </ul>
   </aside>
 
@@ -30,122 +136,54 @@
     <div class="dashboard-body">
       <h2>Consulta de alumnos</h2>
 
-      <form class="formulario-alumno">
-        <fieldset>
-          <legend>Seleccionar alumno</legend>
-          <label for="matricula">Alumno:</label>
-          <select name="matricula" id="matricula" required>
-            <option value="">-- Selecciona un alumno --</option>
-            {% for a in alumnos %}
-              <option value="{{ a.matricula }}">
-                {{ a.nombre }} {{ a.apellido_paterno }} {{ a.apellido_materno }} ({{ a.matricula }})
-              </option>
-            {% endfor %}
-          </select>
-        </fieldset>
+      <!-- Buscador dinámico -->
+      <div class="busqueda-container">
+        <label for="busqueda">Buscar por nombre:</label>
+        <input type="text" id="busqueda" placeholder="Escribe un nombre...">
+        <ul id="resultados"></ul>
+      </div>
 
-        <!-- Recuadro profesional de datos del alumno -->
-        <fieldset class="datos-alumno">
-          <legend>Datos del alumno</legend>
+      <!-- Datos del alumno -->
+      <fieldset class="datos-alumno">
+        <legend>Datos del alumno</legend>
+        <label>Nombre:</label>
+        <input type="text" id="nombre" readonly>
+        <label>Apellido paterno:</label>
+        <input type="text" id="apellido_paterno" readonly>
+        <label>Apellido materno:</label>
+        <input type="text" id="apellido_materno" readonly>
+        <label>Teléfono:</label>
+        <input type="text" id="telefono" readonly>
+        <label>Correo:</label>
+        <input type="email" id="email" readonly>
+      </fieldset>
 
-          <div class="datos-grid">
-            <!-- Información personal -->
-            <div class="grupo">
-              <h4>Información personal</h4>
-
-              <label for="nombre">Nombre:</label>
-              <input type="text" id="nombre" readonly>
-
-              <label for="apellido_paterno">Apellido paterno:</label>
-              <input type="text" id="apellido_paterno" readonly>
-
-              <label for="apellido_materno">Apellido materno:</label>
-              <input type="text" id="apellido_materno" readonly>
-
-              <label for="telefono">Teléfono:</label>
-              <input type="text" id="telefono" readonly>
-
-              <label for="email">Correo:</label>
-              <input type="email" id="email" readonly>
-            </div>
-
-            <!-- Información académica -->
-            <div class="grupo">
-              <h4>Información académica</h4>
-
-              <label for="proyecto">Proyecto:</label>
-              <select id="proyecto" disabled>
-                {% for proyecto in proyectos %}
-                  <option value="{{ proyecto.id }}">{{ proyecto.nombre }}</option>
-                {% endfor %}
-              </select>
-
-              <label for="institucion">Institución:</label>
-              <select id="institucion" disabled>
-                {% for institucion in instituciones %}
-                  <option value="{{ institucion.id }}">{{ institucion.nombre }}</option>
-                {% endfor %}
-              </select>
-
-              <label for="estado">Estado:</label>
-              <select id="estado" disabled>
-                {% for e in estados %}
-                  <option value="{{ e }}">{{ e }}</option>
-                {% endfor %}
-              </select>
-
-              <label for="documentacion">Documentación:</label>
-              <select id="documentacion" disabled>
-                {% for doc in documentacion %}
-                  <option value="{{ doc }}">{{ doc }}</option>
-                {% endfor %}
-              </select>
-
-              <label for="area">Área:</label>
-              <select id="area" disabled>
-                {% for a in areas %}
-                  <option value="{{ a }}">{{ a }}</option>
-                {% endfor %}
-              </select>
-
-              <label for="tipo_servicio">Tipo de servicio:</label>
-              <select id="tipo_servicio" disabled>
-                {% for tipo in tipos_servicio %}
-                  <option value="{{ tipo }}">{{ tipo }}</option>
-                {% endfor %}
-              </select>
-            </div>
-          </div>
-        </fieldset>
-
-        <div class="form-actions">
-          <button type="button" id="editar">Editar datos</button>
-        </div>
-      </form>
+      <div class="form-actions">
+        <button type="button" id="editar">Editar datos</button>
+        <a href="/dashboard" class="btn-regresar">Regresar </a>
+      </div>
 
       <!-- Acciones disponibles -->
       <div class="acciones-alumno" id="acciones-alumno" style="display: none;">
-        <h3>Acciones disponibles para el alumno</h3>
+        <h3>Acciones disponibles</h3>
         <ul>
-          <li><a id="link-modificar" href="#">Modificar datos</a></li>
-          <li><a id="link-proyecto" href="#">Asignar/Cambiar proyecto</a></li>
-          <li><a id="link-horario" href="#">Asignar/Cambiar horario</a></li>
-          <li><a id="link-comentarios" href="#">Ver comentarios</a></li>
-          <li><a id="link-log" href="#">Ver log</a></li>
-          <li><a id="link-eliminar" href="#">Eliminar alumno</a></li>
+          <li><a id="link-modificar" href="#"><span>✏️</span> Modificar datos</a></li>
+          <li><a id="link-proyecto" href="#"><span>📂</span> Asignar/Cambiar proyecto</a></li>
+          <li><a id="link-horario" href="#"><span>📅</span> Asignar/Cambiar horario</a></li>
+          <li><a id="link-comentarios" href="#"><span>💬</span> Ver comentarios</a></li>
+          <li><a id="link-log" href="#"><span>📜</span> Ver log</a></li>
+          <li><a id="link-eliminar" href="#"><span>🗑️</span> Eliminar alumno</a></li>
         </ul>
       </div>
     </div>
   </main>
 </div>
 
-<!-- Script funcional -->
 <script>
 function toggleSubmenu(id) {
   const submenu = document.getElementById(id);
   submenu.hidden = !submenu.hidden;
 }
-
 window.addEventListener('DOMContentLoaded', () => {
   const submenu = document.getElementById('submenu-alumnos');
   if (submenu) submenu.hidden = false;
@@ -153,12 +191,37 @@ window.addEventListener('DOMContentLoaded', () => {
 
 let matriculaSeleccionada = null;
 
-document.getElementById('matricula').addEventListener('change', async function () {
-  const matricula = this.value;
+document.getElementById('busqueda').addEventListener('input', async function () {
+  const nombre = this.value.trim();
+  const resultados = document.getElementById('resultados');
+  resultados.innerHTML = '';
+
+  if (nombre.length < 2) return;
+
+  try {
+    const res = await fetch(`/api/alumnos/buscar?nombre=${encodeURIComponent(nombre)}`);
+    const alumnos = await res.json();
+
+    if (alumnos.length === 0) {
+      resultados.innerHTML = '<li>No se encontraron coincidencias</li>';
+      return;
+    }
+
+    alumnos.forEach(a => {
+      const li = document.createElement('li');
+      li.textContent = `${a.nombre} ${a.apellido_paterno} ${a.apellido_materno} (${a.matricula})`;
+      li.addEventListener('click', () => cargarDatosAlumno(a.matricula));
+      resultados.appendChild(li);
+    });
+  } catch (error) {
+    console.error('Error al buscar alumnos:', error);
+  }
+});
+
+// Cargar datos del alumno seleccionado
+async function cargarDatosAlumno(matricula) {
   matriculaSeleccionada = matricula;
   document.getElementById('acciones-alumno').style.display = 'none';
-
-  if (!matricula) return;
 
   try {
     const res = await fetch(`/api/alumnos/datos?matricula=${encodeURIComponent(matricula)}`);
@@ -170,21 +233,15 @@ document.getElementById('matricula').addEventListener('change', async function (
       document.getElementById('apellido_materno').value = datos.apellido_materno || '';
       document.getElementById('telefono').value = datos.telefono || '';
       document.getElementById('email').value = datos.e_mail || '';
-      document.getElementById('estado').value = datos.status || '';
-      document.getElementById('documentacion').value = datos.documentos || '';
-      document.getElementById('proyecto').value = datos.proyecto || '';
-      document.getElementById('institucion').value = datos.institucion || '';
-      document.getElementById('area').value = datos.area || '';
-      document.getElementById('tipo_servicio').value = datos.tipo_servicio || '';
     }
   } catch (error) {
-    console.error('Error al obtener datos del alumno:', error);
+    console.error('Error al cargar datos del alumno:', error);
   }
-});
+}
 
+// Mostrar acciones con enlaces dinámicos
 document.getElementById('editar').addEventListener('click', function () {
   if (!matriculaSeleccionada) return;
-
   document.getElementById('acciones-alumno').style.display = 'block';
 
   document.getElementById('link-modificar').href = `/alumnos/modificar?matricula=${matriculaSeleccionada}`;

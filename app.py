@@ -149,7 +149,7 @@ def modificar_alumno():
         error=error
     )
     
-@app.route('/alumnos/asignar_proyecto', methods=['GET', 'POST'])
+@app.route('/alumnos/asignar-proyecto', methods=['GET', 'POST'])
 def asignar_proyecto():
     mensaje = None
     error = None
@@ -189,7 +189,7 @@ def asignar_proyecto():
         error=error
     )
     
-@app.route('/alumnos/desasignar_proyecto', methods=['GET', 'POST'])
+@app.route('/alumnos/desasignar-proyecto', methods=['GET', 'POST'])
 def desasignar_proyecto():
     mensaje = None
     error = None
@@ -215,7 +215,7 @@ def desasignar_proyecto():
 
     alumnos = list(alumnos_col.find({"proyecto": {"$exists": True}}, {"matricula": 1, "nombre": 1}))
     return render_template(
-        'alumnos/desasignar_proyecto.html',
+        'alumnos/desasignar_proyecto.html',  # nombre del archivo HTML
         alumnos=alumnos,
         mensaje=mensaje,
         error=error
@@ -244,7 +244,7 @@ def modificar_contrasena():
 
     alumnos = list(alumnos_col.find({}, {"matricula": 1, "nombre": 1}))
     return render_template(
-        'alumnos/cambiar_contrasena_alumno.html',
+        'alumnos/modificar_contrasena.html',  # 👈 nombre de la plantilla
         alumnos=alumnos,
         mensaje=mensaje,
         error=error
@@ -421,7 +421,6 @@ def eliminar_alumno():
 def consulta_alumnos():
     proyectos = list(proyectos_col.find({}, {"_id": 0, "id": 1, "nombre": 1}))
     instituciones = list(instituciones_col.find({}, {"_id": 0, "id": 1, "nombre": 1}))
-    alumnos = list(alumnos_col.find({}, {"_id": 0, "matricula": 1, "nombre": 1, "apellido_paterno": 1, "apellido_materno": 1}))
     areas = ["Administrativa", "Técnica", "Social"]
     tipos_servicio = ["Prácticas", "Servicio social", "Residencia"]
     documentacion = ["Completa", "Incompleta", "No entregada"]
@@ -430,16 +429,26 @@ def consulta_alumnos():
     return render_template('alumnos/consulta_alumnos.html',
                            proyectos=proyectos,
                            instituciones=instituciones,
-                           alumnos=alumnos,
                            areas=areas,
                            tipos_servicio=tipos_servicio,
                            documentacion=documentacion,
                            estados=estados)
 
+@app.route('/api/alumnos/buscar', methods=['GET'])
+def buscar_alumnos():
+    nombre = request.args.get('nombre', '').strip()
+    if not nombre:
+        return jsonify([])
+
+    alumnos = list(alumnos_col.find(
+        {"nombre": {"$regex": nombre, "$options": "i"}},
+        {"_id": 0, "matricula": 1, "nombre": 1, "apellido_paterno": 1, "apellido_materno": 1}
+    ))
+    return jsonify(alumnos)
+
 @app.route('/api/alumnos/datos', methods=['GET'])
 def obtener_datos_alumno():
     matricula = request.args.get('matricula', '').strip()
-
     try:
         matricula = int(matricula)
     except ValueError:

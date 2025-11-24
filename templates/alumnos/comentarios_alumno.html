@@ -1,20 +1,86 @@
 {% extends "layout/base.html" %}
 
 {% block contenido %}
+<style>
+  .btn-regresar {
+    display: inline-block;
+    margin-left: 1rem;
+    padding: 0.5rem 1rem;
+    background-color: #555;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+
+  .btn-regresar:hover {
+    background-color: #333;
+  }
+
+  .form-actions {
+    margin-top: 1.5rem;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .formulario-alumno fieldset {
+    border: 1px solid #ccc;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 6px;
+  }
+
+  .formulario-alumno label {
+    display: block;
+    margin-top: 0.8rem;
+    font-weight: bold;
+  }
+
+  .formulario-alumno input,
+  .formulario-alumno select,
+  .formulario-alumno textarea {
+    width: 100%;
+    padding: 0.4rem;
+    margin-top: 0.2rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+  }
+
+  .alerta-exito {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 0.8rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+  }
+
+  .alerta-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 0.8rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+  }
+</style>
+
 <div class="dashboard-wrapper">
-  <!-- Sidebar institucional actualizado -->
+  <!-- Sidebar institucional completo -->
   <aside class="sidebar">
     <ul class="sidebar-menu">
+      <!-- Alumnos -->
       <li>
         <a href="#" class="menu-principal" onclick="toggleSubmenu('submenu-alumnos')">Alumnos</a>
         <ul class="submenu" id="submenu-alumnos" hidden>
           <li><a href="/alumnos/registrar">Registrar nuevo alumno</a></li>
           <li><a href="/alumnos/activar">Activar/Inactivar alumno</a></li>
           <li><a href="/alumnos/modificar">Modificar datos del alumno</a></li>
-          <li><a href="/alumnos/asignar_proyecto">Asignar/Cambiar proyecto al alumno</a></li>
-          <li><a href="/alumnos/desasignar_proyecto">Desasignar proyecto al alumno</a></li>
-          <li><a href="/alumnos/modificar_contrasena">Cambiar contraseña al alumno</a></li>
-          <li><a href="/alumnos/asignar_horario">Asignar/Cambiar horario al alumno</a></li>
+          <li><a href="/alumnos/asignar-proyecto">Asignar/Cambiar proyecto al alumno</a></li>
+          <li><a href="/alumnos/desasignar-proyecto">Desasignar proyecto al alumno</a></li>
+          <li><a href="/alumnos/modificar-contrasena">Cambiar contraseña al alumno</a></li>
+          <li><a href="/alumnos/asignar-horario">Asignar/Cambiar horario al alumno</a></li>
           <li><a href="/alumnos/horario">Horario alumno</a></li>
           <li><a href="/alumnos/comentarios">Histórico de comentarios del alumno</a></li>
           <li><a href="/alumnos/log">Log del alumno</a></li>
@@ -22,7 +88,56 @@
           <li><a href="/alumnos/consulta">Consulta de alumnos</a></li>
         </ul>
       </li>
-      <!-- Otros submenús: instituciones, proyectos, asistencia, documentos, perfil -->
+
+      <!-- Instituciones -->
+      <li>
+        <a href="#" class="menu-principal" onclick="toggleSubmenu('submenu-instituciones')">Instituciones</a>
+        <ul class="submenu" id="submenu-instituciones" hidden>
+          <li><a href="/instituciones/registrar">Registrar nueva institución</a></li>
+          <li><a href="/instituciones/modificar">Modificar institución</a></li>
+          <li><a href="/instituciones/eliminar">Eliminar institución</a></li>
+          <li><a href="/instituciones/consulta">Consultar instituciones</a></li>
+        </ul>
+      </li>
+
+      <!-- Proyectos -->
+      <li>
+        <a href="#" class="menu-principal" onclick="toggleSubmenu('submenu-proyectos')">Proyectos</a>
+        <ul class="submenu" id="submenu-proyectos" hidden>
+          <li><a href="/proyectos/registrar">Registrar nuevo proyecto</a></li>
+          <li><a href="/proyectos/modificar">Modificar datos del proyecto</a></li>
+          <li><a href="/proyectos/terminar">Terminar proyecto</a></li>
+          <li><a href="/proyectos/consulta">Consulta de proyectos</a></li>
+        </ul>
+      </li>
+
+      <!-- Asistencia -->
+      <li>
+        <a href="#" class="menu-principal" onclick="toggleSubmenu('submenu-asistencia')">Asistencia</a>
+        <ul class="submenu" id="submenu-asistencia" hidden>
+          <li><a href="/asistencia/consulta">Consultar asistencia del alumno</a></li>
+          <li><a href="/asistencia/incidencias">Incidencias</a></li>
+        </ul>
+      </li>
+
+      <!-- Documentos -->
+      <li>
+        <a href="#" class="menu-principal" onclick="toggleSubmenu('submenu-documentos')">Documentos</a>
+        <ul class="submenu" id="submenu-documentos" hidden>
+          <li><a href="/documentos/aceptacion">Carta de aceptación</a></li>
+          <li><a href="/documentos/terminacion">Carta de terminación</a></li>
+          <li><a href="/documentos/horas">Constancia de horas</a></li>
+        </ul>
+      </li>
+
+      <!-- Perfil -->
+      <li>
+        <a href="#" class="menu-principal" onclick="toggleSubmenu('submenu-perfil')">Perfil</a>
+        <ul class="submenu" id="submenu-perfil" hidden>
+          <li><a href="/perfil/modificar">Modificar perfil</a></li>
+          <li><a href="/dashboard/login.html">Cerrar sesión</a></li>
+        </ul>
+      </li>
     </ul>
   </aside>
 
@@ -62,6 +177,7 @@
 
         <div class="form-actions">
           <button type="submit">Guardar comentario</button>
+          <a href="/dashboard" class="btn-regresar">Regresar </a>
         </div>
       </form>
     </div>
@@ -73,5 +189,9 @@ function toggleSubmenu(id) {
   const submenu = document.getElementById(id);
   submenu.hidden = !submenu.hidden;
 }
+window.addEventListener('DOMContentLoaded', () => {
+  const submenu = document.getElementById('submenu-alumnos');
+  if (submenu) submenu.hidden = false;
+});
 </script>
 {% endblock %}

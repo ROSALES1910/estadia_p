@@ -1,6 +1,71 @@
 {% extends "layout/base.html" %}
 
 {% block contenido %}
+<style>
+  .btn-regresar {
+    display: inline-block;
+    margin-left: 1rem;
+    padding: 0.5rem 1rem;
+    background-color: #555;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+
+  .btn-regresar:hover {
+    background-color: #333;
+  }
+
+  .form-actions {
+    margin-top: 1.5rem;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .formulario-alumno fieldset {
+    border: 1px solid #ccc;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 6px;
+  }
+
+  .formulario-alumno label {
+    display: block;
+    margin-top: 0.8rem;
+    font-weight: bold;
+  }
+
+  .formulario-alumno input,
+  .formulario-alumno select,
+  .formulario-alumno textarea {
+    width: 100%;
+    padding: 0.4rem;
+    margin-top: 0.2rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+  }
+
+  .alerta-exito {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 0.8rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+  }
+
+  .alerta-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 0.8rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+  }
+</style>
+
 <div class="dashboard-wrapper">
   <!-- Sidebar institucional -->
   <aside class="sidebar">
@@ -22,7 +87,6 @@
           <li><a href="/alumnos/consulta">Consulta de alumnos</a></li>
         </ul>
       </li>
-      <!-- Otros submenús: instituciones, proyectos, asistencia, documentos, perfil -->
     </ul>
   </aside>
 
@@ -70,6 +134,8 @@
 
         <div class="form-actions">
           <button type="submit">Asignar proyecto</button>
+          <!-- Botón regresar al dashboard -->
+          <a href="/dashboard" class="btn-regresar">Regresar </a>
         </div>
       </form>
     </div>
