@@ -3,20 +3,39 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PORTAL SERVICIO SOCIAL</title>
-  <link rel="stylesheet" href="/static/css/style.css">
+  <title>{% block titulo %}PORTAL SERVICIO SOCIAL{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script defer src="{{ url_for('static', filename='js/menu.js') }}"></script>
 </head>
 <body>
   <header>
     <div class="logo-container">
-      <img src="/static/img/logo_gomezmorin.png" alt="PORTAL SERVICIO SOCIAL" class="logo-img">
+      <img src="{{ url_for('static', filename='img/logo_gomezmorin.png') }}" alt="PORTAL SERVICIO SOCIAL" class="logo-img">
     </div>
   </header>
 
-  {% block contenido %}{% endblock %}
+  <!-- Contenedor horizontal -->
+  <div class="dashboard-wrapper">
+    <!-- Menú lateral cargado automáticamente -->
+    {% include "layout/menu_general.html" %}
+
+    <!-- Contenido principal de cada página hija -->
+    {% block contenido %}{% endblock %}
+  </div>
 
   <footer>
-    <p>&copy;</p>
+    <p>&copy; PORTAL SERVICIO SOCIAL</p>
   </footer>
+
+  <script>
+    function toggleSubmenu(id) {
+      const submenu = document.getElementById(id);
+      submenu.hidden = !submenu.hidden;
+    }
+    window.addEventListener('DOMContentLoaded', () => {
+      const submenu = document.getElementById('submenu-alumnos');
+      if (submenu) submenu.hidden = false;
+    });
+  </script>
 </body>
 </html>

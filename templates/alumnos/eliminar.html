@@ -1,5 +1,7 @@
 {% extends "layout/base.html" %}
 
+{% block titulo %}Eliminar alumno{% endblock %}
+
 {% block contenido %}
 <style>
   .btn-regresar {
@@ -48,64 +50,37 @@
   }
 </style>
 
-<div class="dashboard-wrapper">
-  <aside class="sidebar">
-    <ul class="sidebar-menu">
-      <li>
-        <a href="#" class="menu-principal" onclick="toggleSubmenu('submenu-alumnos')">Alumnos</a>
-        <ul class="submenu" id="submenu-alumnos" hidden>
-          <li><a href="/alumnos/registrar">Registrar nuevo alumno</a></li>
-          <li><a href="/alumnos/activar">Activar/Inactivar alumno</a></li>
-          <li><a href="/alumnos/modificar">Modificar datos del alumno</a></li>
-          <li><a href="/alumnos/asignar-proyecto">Asignar/Cambiar proyecto al alumno</a></li>
-          <li><a href="/alumnos/desasignar-proyecto">Desasignar proyecto al alumno</a></li>
-          <li><a href="/alumnos/modificar-contrasena">Cambiar contraseña al alumno</a></li>
-          <li><a href="/alumnos/asignar-horario">Asignar/Cambiar horario al alumno</a></li>
-          <li><a href="/alumnos/horario">Horario alumno</a></li>
-          <li><a href="/alumnos/comentarios">Histórico de comentarios del alumno</a></li>
-          <li><a href="/alumnos/log">Log del alumno</a></li>
-          <li><a href="/alumnos/eliminar" class="activo">Eliminar alumno</a></li>
-          <li><a href="/alumnos/consulta">Consulta de alumnos</a></li>
-        </ul>
-      </li>
+<main class="dashboard-main">
+  <div class="dashboard-header">
+    <form action="{{ url_for('logout') }}" method="post" class="logout-form">
+      <button type="submit" class="logout-button" title="Cerrar sesión">⏻</button>
+    </form>
+  </div>
 
-      <li><a href="/instituciones" class="menu-principal">Instituciones</a></li>
-      <li><a href="/proyectos" class="menu-principal">Proyectos</a></li>
-      <li><a href="/perfil" class="menu-principal">Perfil</a></li>
-    </ul>
-  </aside>
+  <div class="dashboard-body">
+    <h2>Eliminar alumno</h2>
 
-  <main class="dashboard-main">
-    <div class="dashboard-header">
-      <button class="logout-button">⏻</button>
-    </div>
+    <form method="post" action="/alumnos/eliminar" class="formulario-alumno">
+      <fieldset>
+        <legend>Seleccionar alumno</legend>
+        <label for="alumno">Alumno:</label>
+        <select name="alumno" id="alumno" required>
+          <option value="">Seleccione un alumno...</option>
+          {% for alumno in alumnos %}
+            <option value="{{ alumno.id }}">{{ alumno.nombre }}</option>
+          {% endfor %}
+        </select>
+      </fieldset>
 
-    <div class="dashboard-body">
-      <h2>Eliminar alumno</h2>
-
-      <form method="post" action="/alumnos/eliminar" class="formulario-alumno">
-        <fieldset>
-          <legend>Seleccionar alumno</legend>
-          <label for="alumno">Alumno:</label>
-          <select name="alumno" id="alumno" required>
-            <option value="">Seleccione un alumno...</option>
-            {% for alumno in alumnos %}
-              <option value="{{ alumno.id }}">{{ alumno.nombre }}</option>
-            {% endfor %}
-          </select>
-        </fieldset>
-
-        <div class="form-actions">
-          <button type="submit" onclick="return confirm('¿Estás segura de que deseas eliminar este alumno?')">
-             Eliminar alumno
-          </button>
-          <!-- Botón regresar al dashboard -->
-          <a href="/dashboard" class="btn-regresar">Regresar </a>
-        </div>
-      </form>
-    </div>
-  </main>
-</div>
+      <div class="form-actions">
+        <button type="submit" onclick="return confirm('¿Estás segura de que deseas eliminar este alumno?')">
+          Eliminar alumno
+        </button>
+        <a href="/dashboard" class="btn-regresar">Regresar</a>
+      </div>
+    </form>
+  </div>
+</main>
 
 <script>
 function toggleSubmenu(id) {

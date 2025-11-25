@@ -1,28 +1,8 @@
 {% extends "layout/base.html" %}
 
 {% block contenido %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/alumnos.css') }}">
 <div class="dashboard-wrapper">
-  <aside class="sidebar">
-    <ul class="sidebar-menu">
-      <li>
-        <a href="#" class="menu-principal" onclick="toggleSubmenu('submenu-alumnos')">Alumnos</a>
-        <ul class="submenu" id="submenu-alumnos" hidden>
-          <li><a href="/alumnos/registrar">Registrar nuevo alumno</a></li>
-          <li><a href="/alumnos/activar">Activar/Inactivar alumno</a></li>
-          <li><a href="/alumnos/modificar">Modificar datos del alumno</a></li>
-          <li><a href="/alumnos/asignar_proyecto">Asignar/Cambiar proyecto al alumno</a></li>
-          <li><a href="/alumnos/desasignar_proyecto">Desasignar proyecto al alumno</a></li>
-          <li><a href="/alumnos/modificar_contrasena">Cambiar contraseña al alumno</a></li>
-          <li><a href="/alumnos/asignar-horario">Asignar/Cambiar horario al alumno</a></li>
-          <li><a href="/alumnos/horario">Horario alumno</a></li>
-          <li><a href="/alumnos/comentarios">Histórico de comentarios del alumno</a></li>
-          <li><a href="/alumnos/log">Log del alumno</a></li>
-          <li><a href="/alumnos/eliminar">Eliminar alumno</a></li>
-          <li><a href="/alumnos/consulta">Consulta de alumnos</a></li>
-        </ul>
-      </li>
-    </ul>
-  </aside>
 
   <main class="dashboard-main">
     <div class="dashboard-header">
@@ -41,7 +21,7 @@
 
       <form method="GET" action="/alumnos/asignar-horario">
         <label for="id_alumno">Selecciona un alumno</label>
-        <select name="id_alumno" onchange="this.form.submit()">
+        <select id="id_alumno" name="id_alumno" title="Selecciona un alumno" aria-label="Selecciona un alumno" onchange="this.form.submit()">
           <option value="">-- Selecciona --</option>
           {% for alumno in alumnos %}
           <option value="{{ alumno.id_alumno }}" {% if seleccionado and alumno.id_alumno == seleccionado.id_alumno %}selected{% endif %}>
@@ -72,17 +52,19 @@
             <tr>
               <td>{{ dia.capitalize() }}</td>
               <td>
-                <input type="time" name="{{ dia }}_inicio" value="{{ horario[dia][0] if horario[dia] is defined }}">
+                <label for="{{ dia }}_inicio" class="sr-only">Inicio {{ dia.capitalize() }}</label>
+                <input type="time" id="{{ dia }}_inicio" name="{{ dia }}_inicio" title="Hora de inicio para {{ dia }}" aria-label="Inicio {{ dia.capitalize() }}" placeholder="hh:mm" value="{{ horario[dia][0] if horario[dia] is defined }}">
               </td>
               <td>
-                <input type="time" name="{{ dia }}_fin" value="{{ horario[dia][1] if horario[dia] is defined }}">
+                <label for="{{ dia }}_fin" class="sr-only">Fin {{ dia.capitalize() }}</label>
+                <input type="time" id="{{ dia }}_fin" name="{{ dia }}_fin" title="Hora de fin para {{ dia }}" aria-label="Fin {{ dia.capitalize() }}" placeholder="hh:mm" value="{{ horario[dia][1] if horario[dia] is defined }}">
               </td>
             </tr>
             {% endfor %}
             <tr>
               <td colspan="3">
-                <input type="checkbox" name="sin_horario" {% if seleccionado.sin_horario %}checked{% endif %}>
-                <span>No asignar horario</span>
+                <input type="checkbox" id="sin_horario" name="sin_horario" title="No asignar horario" aria-label="No asignar horario" {% if seleccionado.sin_horario %}checked{% endif %}>
+                <label for="sin_horario">No asignar horario</label>
               </td>
             </tr>
           </tbody>
@@ -91,8 +73,8 @@
           <button type="submit">Guardar horario</button>
         </div>
       </form>
-
-      <div class="form-actions" style="margin-top: 30px; display: flex; gap: 20px;">
+      <div class="form-actions form-actions-row">
+      <div class="form-actions form-actions-inline">
         <button type="button" class="boton-volver" onclick="window.history.back()">Regresar</button>
         <a href="/dashboard" class="boton-volver">Ir al dashboard</a>
       </div>

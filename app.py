@@ -291,7 +291,7 @@ def asignar_horario():
             mensaje = f"No se encontró el alumno con ID {id_alumno}."
 
     return render_template(
-        'alumnos/asignar_cambiar_horario.html',
+        'alumnos/asignar_horario.html',
         alumnos=alumnos,
         seleccionado=seleccionado,
         horario=horario,

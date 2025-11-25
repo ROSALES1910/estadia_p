@@ -1,5 +1,7 @@
 {% extends "layout/base.html" %}
 
+{% block titulo %}Generar log del alumno{% endblock %}
+
 {% block contenido %}
 <style>
   .btn-regresar {
@@ -13,10 +15,7 @@
     font-weight: bold;
     transition: background-color 0.3s ease;
   }
-
-  .btn-regresar:hover {
-    background-color: #333;
-  }
+  .btn-regresar:hover { background-color: #333; }
 
   .form-actions {
     margin-top: 1.5rem;
@@ -31,13 +30,7 @@
     margin-bottom: 1rem;
     border-radius: 6px;
   }
-
-  .formulario-alumno label {
-    display: block;
-    margin-top: 0.8rem;
-    font-weight: bold;
-  }
-
+  .formulario-alumno label { display: block; margin-top: 0.8rem; font-weight: bold; }
   .formulario-alumno select {
     width: 100%;
     padding: 0.4rem;
@@ -54,7 +47,6 @@
     border-radius: 4px;
     margin-bottom: 1rem;
   }
-
   .alerta-error {
     background-color: #f8d7da;
     color: #721c24;
@@ -64,62 +56,36 @@
   }
 </style>
 
-<div class="dashboard-wrapper">
-  <!-- Menú lateral institucional -->
-  <aside class="sidebar">
-    <ul class="sidebar-menu">
-      <li>
-        <a href="#" class="menu-principal" onclick="toggleSubmenu('submenu-alumnos')">Alumnos</a>
-        <ul class="submenu" id="submenu-alumnos" hidden>
-          <li><a href="/alumnos/registrar">Registrar nuevo alumno</a></li>
-          <li><a href="/alumnos/activar">Activar/Inactivar alumno</a></li>
-          <li><a href="/alumnos/modificar">Modificar datos del alumno</a></li>
-          <li><a href="/alumnos/asignar-proyecto">Asignar/Cambiar proyecto al alumno</a></li>
-          <li><a href="/alumnos/desasignar-proyecto">Desasignar proyecto al alumno</a></li>
-          <li><a href="/alumnos/modificar-contrasena">Cambiar contraseña al alumno</a></li>
-          <li><a href="/alumnos/asignar-horario">Asignar/Cambiar horario al alumno</a></li>
-          <li><a href="/alumnos/horario">Horario alumno</a></li>
-          <li><a href="/alumnos/comentarios">Histórico de comentarios del alumno</a></li>
-          <li><a href="/alumnos/log" class="activo">Log del alumno</a></li>
-          <li><a href="/alumnos/eliminar">Eliminar alumno</a></li>
-          <li><a href="/alumnos/consulta">Consulta de alumnos</a></li>
-        </ul>
-      </li>
-    </ul>
-  </aside>
+<main class="dashboard-main">
+  <div class="dashboard-body">
+    <h2>Generar log del alumno</h2>
 
-  <!-- Área principal -->
-  <main class="dashboard-main">
-    <div class="dashboard-body">
-      <h2>Generar log del alumno</h2>
+    {% if mensaje %}
+      <div class="alerta-exito">{{ mensaje }}</div>
+    {% endif %}
+    {% if error %}
+      <div class="alerta-error">{{ error }}</div>
+    {% endif %}
 
-      {% if mensaje %}
-        <div class="alerta-exito">{{ mensaje }}</div>
-      {% endif %}
-      {% if error %}
-        <div class="alerta-error">{{ error }}</div>
-      {% endif %}
+    <form method="POST" action="/alumnos/log" class="formulario-alumno">
+      <fieldset>
+        <legend>Buscar alumno</legend>
+        <label for="alumno">Selecciona un alumno:</label>
+        <select name="alumno" id="alumno" required>
+          <option value="">-- Selecciona --</option>
+          {% for alumno in alumnos %}
+            <option value="{{ alumno.matricula }}">{{ alumno.nombre }}</option>
+          {% endfor %}
+        </select>
+      </fieldset>
 
-      <form method="POST" action="/alumnos/log" class="formulario-alumno">
-        <fieldset>
-          <legend>Buscar alumno</legend>
-          <label for="alumno">Selecciona un alumno:</label>
-          <select name="alumno" id="alumno" required>
-            <option value="">-- Selecciona --</option>
-            {% for alumno in alumnos %}
-              <option value="{{ alumno.matricula }}">{{ alumno.nombre }}</option>
-            {% endfor %}
-          </select>
-        </fieldset>
+      <div class="form-actions">
+        <button type="submit">Generar log</button>
+        <a href="/dashboard" class="btn-regresar">Regresar</a>
+      </div>
+    </form>
 
-        <div class="form-actions">
-          <button type="submit">Generar log</button>
-          <!-- Botón regresar al dashboard -->
-          <a href="/dashboard" class="btn-regresar">Regresar </a>
-        </div>
-      </form>
-
-      {% if resumen.datos %}
+    {% if resumen.datos %}
       <hr>
       <h3>Resumen del alumno</h3>
       <p><strong>Nombre:</strong> {{ resumen.datos.nombre }} {{ resumen.datos.apellido_paterno }} {{ resumen.datos.apellido_materno }}</p>
@@ -140,56 +106,44 @@
       {% if resumen.horario %}
         <h4>Horario</h4>
         <ul>
-          {% for dia, horas in resumen.horario.items() %}
-            <li>{{ dia.capitalize() }}: {{ horas[0] }} - {{ horas[1] }}</li>
-          {% endfor %}
+          {%- for dia, horas in resumen.horario.items() -%}
+            <li>{{ dia|capitalize }}: {{ horas[0] }} - {{ horas[1] }}</li>
+          {%- endfor -%}
         </ul>
       {% endif %}
 
       {% if resumen.comentarios %}
         <h4>Comentarios</h4>
         <ul>
-          {% for c in resumen.comentarios %}
+          {%- for c in resumen.comentarios -%}
             <li>{{ c.fecha.strftime('%d/%m/%Y') }} — {{ c.usuario }}: {{ c.comentario }}</li>
-          {% endfor %}
+          {%- endfor -%}
         </ul>
       {% endif %}
-      {% endif %}
+    {% endif %}
 
-      {% if registros %}
-        <hr>
-        <h3>Historial de acciones</h3>
-        <table>
-          <thead>
+    {% if registros %}
+      <hr>
+      <h3>Historial de acciones</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Acción</th>
+            <th>Usuario</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in registros %}
             <tr>
-              <th>Fecha</th>
-              <th>Acción</th>
-              <th>Usuario</th>
+              <td>{{ r.fecha.strftime('%d/%m/%Y %H:%M') }}</td>
+              <td>{{ r.accion }}</td>
+              <td>{{ r.usuario }}</td>
             </tr>
-          </thead>
-          <tbody>
-            {% for r in registros %}
-              <tr>
-                <td>{{ r.fecha.strftime('%d/%m/%Y %H:%M') }}</td>
-                <td>{{ r.accion }}</td>
-                <td>{{ r.usuario }}</td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      {% endif %}
-    </div>
-  </main>
-</div>
-
-<script>
-function toggleSubmenu(id) {
-  const submenu = document.getElementById(id);
-  submenu.hidden = !submenu.hidden;
-}
-window.addEventListener('DOMContentLoaded', () => {
-  const submenu = document.getElementById('submenu-alumnos');
-  if (submenu) submenu.hidden = false;
-});
-</script>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+  </div>
+</main>
 {% endblock %}

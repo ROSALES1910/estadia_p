@@ -1,5 +1,11 @@
 {% extends "layout/base.html" %}
 
+{% block titulo %}Activar/Inactivar alumno{% endblock %}
+
+{% block menu %}
+  {% include "layout/menu_general.html" %}
+{% endblock %}
+
 {% block contenido %}
 <style>
   .btn-regresar {
@@ -65,29 +71,6 @@
 </style>
 
 <div class="dashboard-wrapper">
-  <!-- Sidebar institucional -->
-  <aside class="sidebar">
-    <ul class="sidebar-menu">
-      <li>
-        <a href="#" class="menu-principal" onclick="toggleSubmenu('submenu-alumnos')">Alumnos</a>
-        <ul class="submenu" id="submenu-alumnos" hidden>
-          <li><a href="/alumnos/registrar">Registrar nuevo alumno</a></li>
-          <li><a href="/alumnos/activar">Activar/Inactivar alumno</a></li>
-          <li><a href="/alumnos/modificar">Modificar datos del alumno</a></li>
-          <li><a href="/alumnos/asignar_proyecto">Asignar/Cambiar proyecto al alumno</a></li>
-          <li><a href="/alumnos/desasignar_proyecto">Desasignar proyecto al alumno</a></li>
-          <li><a href="/alumnos/modificar_contrasena">Cambiar contraseña al alumno</a></li>
-          <li><a href="/alumnos/asignar_horario">Asignar/Cambiar horario al alumno</a></li>
-          <li><a href="/alumnos/horario">Horario alumno</a></li>
-          <li><a href="/alumnos/comentarios">Histórico de comentarios del alumno</a></li>
-          <li><a href="/alumnos/log">Log del alumno</a></li>
-          <li><a href="/alumnos/eliminar">Eliminar alumno</a></li>
-          <li><a href="/alumnos/consulta">Consulta de alumnos</a></li>
-        </ul>
-      </li>
-    </ul>
-  </aside>
-
   <!-- Área principal -->
   <main class="dashboard-main">
     <div class="dashboard-header">
@@ -126,7 +109,7 @@
         <div class="form-actions">
           <button type="submit">Actualizar estado</button>
           <!-- Botón regresar al dashboard -->
-          <a href="/dashboard" class="btn-regresar">Regresar </a>
+          <a href="/dashboard" class="btn-regresar">Regresar</a>
         </div>
       </form>
     </div>
