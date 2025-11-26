@@ -1,0 +1,48 @@
+{% extends "layout/base.html" %}
+{% block contenido %}
+<div class="dashboard-wrapper">
+  <aside class="sidebar">
+    <ul class="sidebar-menu">
+      <li><a href="/admin" class="menu-principal">← Volver al Panel</a></li>
+    </ul>
+  </aside>
+
+  <main class="dashboard-main">
+    <div class="dashboard-header">
+      <h2>Gestión de Usuarios</h2>
+      <form action="{{ url_for('logout') }}" method="post" style="display:inline;">
+        <button type="submit" class="logout-button" title="Cerrar sesión">⏻</button>
+      </form>
+    </div>
+
+    <div class="dashboard-body">
+      <p>Aquí puedes registrar, modificar o eliminar usuarios del sistema.</p>
+
+      <div class="formulario-alumno">
+        <form method="POST" action="/admin/usuarios/crear">
+          <div class="form-secciones">
+            <fieldset>
+              <legend>Datos del Usuario</legend>
+              <label for="username">Usuario:</label>
+              <input type="text" id="username" name="username" required>
+
+              <label for="password">Contraseña:</label>
+              <input type="password" id="password" name="password" required>
+
+              <label for="rol">Rol:</label>
+              <select id="rol" name="rol" required>
+                <option value="alumno">Alumno</option>
+                <option value="admin">Administrador</option>
+              </select>
+            </fieldset>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit">Crear Usuario</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+</div>
+{% endblock %}

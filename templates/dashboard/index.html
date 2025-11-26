@@ -1,8 +1,7 @@
 {% extends "layout/base.html" %}
-
 {% block contenido %}
 <div class="dashboard-wrapper">
-  <!-- Sidebar institucional -->
+  <!-- Sidebar -->
   <aside class="sidebar">
     <ul class="sidebar-menu">
       <!-- Alumnos -->
@@ -12,12 +11,12 @@
           <li><a href="/alumnos/registrar">Registrar nuevo alumno</a></li>
           <li><a href="/alumnos/activar">Activar/Inactivar alumno</a></li>
           <li><a href="/alumnos/modificar">Modificar datos del alumno</a></li>
-          <li><a href="/alumnos/asignar-proyecto">Asignar/Cambiar proyecto al alumno</a></li>
-          <li><a href="/alumnos/desasignar-proyecto">Desasignar proyecto al alumno</a></li>
-          <li><a href="/alumnos/modificar-contrasena">Cambiar contraseña al alumno</a></li>
-          <li><a href="/alumnos/asignar-horario">Asignar/Cambiar horario al alumno</a></li>
+          <li><a href="/alumnos/asignar-proyecto">Asignar/Cambiar proyecto</a></li>
+          <li><a href="/alumnos/desasignar-proyecto">Desasignar proyecto</a></li>
+          <li><a href="/alumnos/modificar-contrasena">Cambiar contraseña</a></li>
+          <li><a href="/alumnos/asignar-horario">Asignar/Cambiar horario</a></li>
           <li><a href="/alumnos/horario">Horario alumno</a></li>
-          <li><a href="/alumnos/comentarios">Histórico de comentarios del alumno</a></li>
+          <li><a href="/alumnos/comentarios">Histórico de comentarios</a></li>
           <li><a href="/alumnos/log">Log del alumno</a></li>
           <li><a href="/alumnos/eliminar">Eliminar alumno</a></li>
           <li><a href="/alumnos/consulta">Consulta de alumnos</a></li>
@@ -40,9 +39,13 @@
         <a href="#" class="menu-principal" onclick="toggleSubmenu('submenu-proyectos')">Proyectos</a>
         <ul class="submenu" id="submenu-proyectos" hidden>
           <li><a href="/proyectos/registrar">Registrar nuevo proyecto</a></li>
-          <li><a href="/proyectos/modificar">Modificar datos del proyecto</a></li>
+          <li><a href="/proyectos/modificar">Modificar proyecto</a></li>
           <li><a href="/proyectos/terminar">Terminar proyecto</a></li>
           <li><a href="/proyectos/consulta">Consulta de proyectos</a></li>
+          {% if rol == 'admin' %}
+            <li><a href="/admin/configuracion">Configuración avanzada</a></li>
+            <li><a href="/admin/usuarios">Gestión de usuarios</a></li>
+          {% endif %}
         </ul>
       </li>
 
@@ -50,7 +53,7 @@
       <li>
         <a href="#" class="menu-principal" onclick="toggleSubmenu('submenu-asistencia')">Asistencia</a>
         <ul class="submenu" id="submenu-asistencia" hidden>
-          <li><a href="/asistencia/consulta">Consultar asistencia del alumno</a></li>
+          <li><a href="/asistencia/consulta">Consultar asistencia</a></li>
           <li><a href="/asistencia/incidencias">Incidencias</a></li>
         </ul>
       </li>
@@ -84,13 +87,9 @@
 
   <!-- Área principal -->
   <main class="dashboard-main">
-    <div class="dashboard-header">
-      <form action="{{ url_for('logout') }}" method="post" style="display:inline;">
-        <button type="submit" class="logout-button" title="Cerrar sesión">⏻</button>
-      </form>
-    </div>
-    <div class="dashboard-body">
-      <h2>Bienvenid@, </h2>
+
+        <div class="dashboard-body">
+      <h2>Bienvenid@, {{ usuario }}</h2>
       <p>Selecciona un módulo del menú para comenzar.</p>
     </div>
   </main>

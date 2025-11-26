@@ -6,11 +6,11 @@ from flask import (
     url_for,
     session,
     flash,
-    jsonify  # ✅ Necesario para responder con JSON en rutas AJAX
+    jsonify
 )
 
-from bson import ObjectId  # Para trabajar con _id en MongoDB
-from datetime import datetime  # Para registrar logs o timestamps si lo necesitas
+from bson import ObjectId
+from datetime import datetime
 
 from models import (
     alumnos_col,
@@ -25,15 +25,104 @@ from models import (
     proyectos_col,
     usuarios_col,
     instituciones_col,
-    logs_col  # ✅ Esta línea es la que agregamos para registrar acciones
+    logs_col
 )
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
+app.secret_key = "clave_secreta_segura"
+
+# ========== LOGIN ==========
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form.get('username', '').strip()
+        password = request.form.get('password', '').strip()
+
+        # Buscar por nombre_usuario en lugar de username
+        usuario = usuarios_col.find_one({"nombre_usuario": username}, {"_id": 0})
+
+        # Validar credenciales y que el usuario esté activo
+        if usuario and usuario.get("password") == password and usuario.get("status") == "Activo":
+            session['usuario'] = usuario['nombre_usuario']
+            session['rol'] = usuario.get('rol', 'alumno')  # si no existe rol, por defecto 'alumno'
+            return redirect('/dashboard')
+        else:
+            return render_template('auth/login.html', error="Credenciales inválidas o usuario inactivo")
+
+    return render_template('auth/login.html')
+# ========== LOGOUT ==========
+@app.route('/logout', methods=['POST'])
+def logout():
+    session.clear()
+    flash('Sesión cerrada correctamente.', 'info')
+    return redirect(url_for('login'))  # Redirige al login institucional
+
 # ========== DASHBOARD ==========
 @app.route('/')
 @app.route('/dashboard')
 def dashboard():
-    return render_template('dashboard/index.html')
+    if 'usuario' not in session:
+        return redirect('/login')
+
+    rol = session.get('rol', 'alumno')
+    usuario = session.get('usuario')
+
+    return render_template('dashboard/index.html', rol=rol, usuario=usuario)
+
+# ========== ADMIN DASHBOARD ==========
+@app.route('/admin')
+def admin_dashboard():
+    if 'usuario' not in session or session.get('rol') != 'admin':
+        return redirect('/login')
+    return render_template('admin/dashboard.html', usuario=session['usuario'])
+
+# ========== ADMIN USUARIOS ==========
+@app.route('/admin/usuarios', methods=['GET', 'POST'])
+def admin_usuarios():
+    if 'usuario' not in session or session.get('rol') != 'admin':
+        return redirect('/login')
+
+    if request.method == 'POST':
+        username = request.form.get('username', '').strip()
+        password = request.form.get('password', '').strip()
+        rol = request.form.get('rol', 'alumno')
+
+        usuarios_col.insert_one({
+            "username": username,
+            "password": password,
+            "rol": rol,
+            "created_at": datetime.now()
+        })
+
+        flash("Usuario creado correctamente", "success")
+        return redirect(url_for('admin_usuarios'))
+
+    return render_template('admin/usuarios.html', usuario=session['usuario'])
+
+# ========== ADMIN CONFIGURACIÓN ==========
+@app.route('/admin/configuracion', methods=['GET', 'POST'])
+def admin_configuracion():
+    if 'usuario' not in session or session.get('rol') != 'admin':
+        return redirect('/login')
+
+    if request.method == 'POST':
+        institucion = request.form.get('institucion', '').strip()
+        max_alumnos = int(request.form.get('max_alumnos', 0))
+
+        logs_col.insert_one({
+            "accion": "configuracion",
+            "institucion": institucion,
+            "max_alumnos": max_alumnos,
+            "usuario": session['usuario'],
+            "fecha": datetime.now()
+        })
+
+        flash("Configuración guardada correctamente", "success")
+        return redirect(url_for('admin_configuracion'))
+
+    return render_template('admin/configuracion.html', usuario=session['usuario'])
+
+
 
 # ========== ALUMNOS ==========
 @app.route('/alumnos/registrar', methods=['GET', 'POST'])
@@ -561,11 +650,7 @@ def consulta_instituciones():
 def pagina_no_encontrada(e):
     return render_template('utils/error.html', error="Página no encontrada"), 404
 
-@app.route('/logout', methods=['POST'])
-def logout():
-    session.clear()
-    flash('Sesión cerrada correctamente.', 'info')
-    return redirect(url_for('login'))  # Redirige al login institucional
+
 
 # ========== INICIO ==========
 if __name__ == '__main__':
