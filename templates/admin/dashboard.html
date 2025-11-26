@@ -1,0 +1,37 @@
+{% extends "layout/base.html" %}
+{% block contenido %}
+<div class="dashboard-wrapper">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <ul class="sidebar-menu">
+      <li>
+        <a href="#" class="menu-principal" onclick="toggleSubmenu('submenu-admin')">Administración</a>
+        <ul class="submenu" id="submenu-admin" hidden>
+          <li><a href="/admin/usuarios">Gestión de usuarios</a></li>
+          <li><a href="/admin/configuracion">Parámetros del sistema</a></li>
+        </ul>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- Área principal -->
+  <main class="dashboard-main">
+    <div class="dashboard-header">
+      <form action="{{ url_for('logout') }}" method="post" style="display:inline;">
+        <button type="submit" class="logout-button" title="Cerrar sesión">⏻</button>
+      </form>
+    </div>
+    <div class="dashboard-body">
+      <h2>Panel de Administración</h2>
+      <p>Bienvenida, {{ usuario }}. Aquí puedes gestionar usuarios y configuración.</p>
+    </div>
+  </main>
+</div>
+
+<script>
+function toggleSubmenu(id) {
+  const submenu = document.getElementById(id);
+  submenu.hidden = !submenu.hidden;
+}
+</script>
+{% endblock %}
