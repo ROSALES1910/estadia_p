@@ -3,21 +3,21 @@
 {% block titulo %}Modificar institución{% endblock %}
 
 {% block contenido %}
-<main class="dashboard-main">
-  <div class="dashboard-header">
-    <form action="{{ url_for('logout') }}" method="post" class="logout-form">
-      <button type="submit" class="logout-button" title="Cerrar sesión">⏻</button>
-    </form>
-  </div>
 
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/formularios.css') }}">
+
+<main class="dashboard-main" role="main" aria-label="Área principal - Modificar institución">
   <div class="dashboard-body">
     <h2>Modificar institución</h2>
 
-    <form method="post" action="/instituciones/modificar" class="formulario-institucion">
+    <form method="post" action="/instituciones/modificar" class="formulario formulario--wide" role="form" aria-label="Formulario modificar institución">
+
       <fieldset>
         <legend>Seleccionar institución</legend>
+
         <label for="institucion">Institución:</label>
-        <select name="institucion" id="institucion" required>
+        <select name="institucion" id="institucion" class="formulario-select" required>
           <option value="">Seleccione la institución...</option>
           {% for institucion in instituciones %}
             <option value="{{ institucion.id }}">{{ institucion.nombre }}</option>
@@ -27,21 +27,24 @@
 
       <fieldset>
         <legend>Datos nuevos</legend>
+
         <label for="nuevo_nombre">Nuevo nombre:</label>
-        <input type="text" name="nuevo_nombre" id="nuevo_nombre">
+        <input type="text" name="nuevo_nombre" id="nuevo_nombre" class="formulario-input" placeholder="Nuevo nombre">
 
         <label for="nuevo_responsable">Nuevo responsable:</label>
-        <input type="text" name="nuevo_responsable" id="nuevo_responsable">
+        <input type="text" name="nuevo_responsable" id="nuevo_responsable" class="formulario-input" placeholder="Nuevo responsable">
 
         <label for="nuevo_cargo">Nuevo cargo:</label>
-        <input type="text" name="nuevo_cargo" id="nuevo_cargo">
+        <input type="text" name="nuevo_cargo" id="nuevo_cargo" class="formulario-input" placeholder="Nuevo cargo">
       </fieldset>
 
-      <div class="form-actions">
-        <button type="submit">Guardar cambios</button>
+      <div class="form-actions" role="group" aria-label="Acciones del formulario">
+        <button type="submit" class="btn btn-primary">Guardar cambios</button>
         <a href="/dashboard" class="btn-regresar">Regresar</a>
       </div>
+
     </form>
   </div>
 </main>
+
 {% endblock %}

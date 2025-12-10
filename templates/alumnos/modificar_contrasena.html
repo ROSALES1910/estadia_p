@@ -2,66 +2,28 @@
 
 {% block titulo %}Cambiar contraseña al alumno{% endblock %}
 
+{% block menu %}
+  {% include "layout/menu_general.html" %}
+{% endblock %}
+
 {% block contenido %}
-<style>
-  .btn-regresar {
-    display: inline-block;
-    margin-left: 1rem;
-    padding: 0.5rem 1rem;
-    background-color: #555;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 4px;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-  }
-
-  .btn-regresar:hover {
-    background-color: #333;
-  }
-
-  .form-actions {
-    margin-top: 1.5rem;
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-  }
-
-  .formulario-alumno fieldset {
-    border: 1px solid #ccc;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    border-radius: 6px;
-  }
-
-  .formulario-alumno label {
-    display: block;
-    margin-top: 0.8rem;
-    font-weight: bold;
-  }
-
-  .formulario-alumno input,
-  .formulario-alumno select {
-    width: 100%;
-    padding: 0.4rem;
-    margin-top: 0.2rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: #f9f9f9;
-  }
-</style>
+<!-- Enlaza tus estilos globales y de formularios -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/formularios.css') }}">
 
 <main class="dashboard-main">
-  <div class="dashboard-header">
-    <form action="{{ url_for('logout') }}" method="post" class="logout-form">
-      <button type="submit" class="logout-button" title="Cerrar sesión">⏻</button>
-    </form>
-  </div>
 
   <div class="dashboard-body">
     <h2>Cambiar contraseña al alumno</h2>
 
-    <form method="post" action="/alumnos/modificar_contrasena" class="formulario-alumno">
+    {% if mensaje %}
+      <div class="alerta-exito">{{ mensaje }}</div>
+    {% endif %}
+    {% if error %}
+      <div class="alerta-error">{{ error }}</div>
+    {% endif %}
+
+    <form method="post" action="/alumnos/modificar_contrasena" class="formulario" id="form-contrasena">
       <fieldset>
         <legend>Seleccionar alumno</legend>
         <label for="alumno">Alumno:</label>
@@ -80,10 +42,33 @@
       </fieldset>
 
       <div class="form-actions">
-        <button type="submit">Actualizar contraseña</button>
+        <button type="submit" class="btn btn-primary" id="submit-btn">Actualizar contraseña</button>
         <a href="/dashboard" class="btn-regresar">Regresar</a>
       </div>
     </form>
   </div>
 </main>
+
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    const mensaje = document.querySelector('.alerta-exito');
+    if (mensaje) {
+      document.getElementById('form-contrasena').reset();
+    }
+
+    const alumnoSelect = document.getElementById('alumno');
+    const contrasenaInput = document.getElementById('contrasena');
+    const submitBtn = document.getElementById('submit-btn');
+
+    function validarFormulario() {
+      submitBtn.disabled = !(alumnoSelect.value && contrasenaInput.value);
+    }
+
+    alumnoSelect.addEventListener('change', validarFormulario);
+    contrasenaInput.addEventListener('input', validarFormulario);
+
+    // Inicializa estado del botón
+    validarFormulario();
+  });
+</script>
 {% endblock %}

@@ -2,59 +2,13 @@
 
 {% block titulo %}Generar log del alumno{% endblock %}
 
+{% block menu %}
+  {% include "layout/menu_general.html" %}
+{% endblock %}
+
 {% block contenido %}
-<style>
-  .btn-regresar {
-    display: inline-block;
-    margin-left: 1rem;
-    padding: 0.5rem 1rem;
-    background-color: #555;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 4px;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-  }
-  .btn-regresar:hover { background-color: #333; }
-
-  .form-actions {
-    margin-top: 1.5rem;
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-  }
-
-  .formulario-alumno fieldset {
-    border: 1px solid #ccc;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    border-radius: 6px;
-  }
-  .formulario-alumno label { display: block; margin-top: 0.8rem; font-weight: bold; }
-  .formulario-alumno select {
-    width: 100%;
-    padding: 0.4rem;
-    margin-top: 0.2rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: #f9f9f9;
-  }
-
-  .alerta-exito {
-    background-color: #d4edda;
-    color: #155724;
-    padding: 0.8rem;
-    border-radius: 4px;
-    margin-bottom: 1rem;
-  }
-  .alerta-error {
-    background-color: #f8d7da;
-    color: #721c24;
-    padding: 0.8rem;
-    border-radius: 4px;
-    margin-bottom: 1rem;
-  }
-</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/formularios.css') }}">
 
 <main class="dashboard-main">
   <div class="dashboard-body">
@@ -67,7 +21,7 @@
       <div class="alerta-error">{{ error }}</div>
     {% endif %}
 
-    <form method="POST" action="/alumnos/log" class="formulario-alumno">
+    <form method="POST" action="/alumnos/log" class="formulario">
       <fieldset>
         <legend>Buscar alumno</legend>
         <label for="alumno">Selecciona un alumno:</label>
@@ -80,7 +34,7 @@
       </fieldset>
 
       <div class="form-actions">
-        <button type="submit">Generar log</button>
+        <button type="submit" class="btn btn-primary">Generar log</button>
         <a href="/dashboard" class="btn-regresar">Regresar</a>
       </div>
     </form>
@@ -106,18 +60,26 @@
       {% if resumen.horario %}
         <h4>Horario</h4>
         <ul>
-          {%- for dia, horas in resumen.horario.items() -%}
-            <li>{{ dia|capitalize }}: {{ horas[0] }} - {{ horas[1] }}</li>
-          {%- endfor -%}
+          {% for dia, horas in resumen.horario.items() %}
+          <li>{{ dia|capitalize }}: {{ horas[0] or '' }}{% if horas[0] and horas[1] %} - {{ horas[1] }}{% elif horas[1] %}{{ horas[1] }}{% endif %}</li>
+          {% endfor %}
         </ul>
       {% endif %}
 
       {% if resumen.comentarios %}
         <h4>Comentarios</h4>
         <ul>
-          {%- for c in resumen.comentarios -%}
-            <li>{{ c.fecha.strftime('%d/%m/%Y') }} — {{ c.usuario }}: {{ c.comentario }}</li>
-          {%- endfor -%}
+          {% for c in resumen.comentarios %}
+          <li>
+            {%- set fecha = c.fecha if c.fecha is defined else None -%}
+            {%- if fecha -%}
+            {{ fecha.strftime('%d/%m/%Y') }}
+            {%- else -%}
+            sin fecha
+            {%- endif -%}
+             — {{ c.usuario|default('usuario') }}: {{ c.comentario }}
+          </li>
+          {% endfor %}
         </ul>
       {% endif %}
     {% endif %}
@@ -125,7 +87,7 @@
     {% if registros %}
       <hr>
       <h3>Historial de acciones</h3>
-      <table>
+      <table class="tabla-resultados">
         <thead>
           <tr>
             <th>Fecha</th>
@@ -136,7 +98,9 @@
         <tbody>
           {% for r in registros %}
             <tr>
-              <td>{{ r.fecha.strftime('%d/%m/%Y %H:%M') }}</td>
+              <td>
+                {%- if r.fecha %}{{ r.fecha.strftime('%d/%m/%Y %H:%M') }}{% else %}sin fecha{% endif -%}
+              </td>
               <td>{{ r.accion }}</td>
               <td>{{ r.usuario }}</td>
             </tr>

@@ -65,8 +65,13 @@
       <a href="#" class="menu-principal" onclick="toggleSubmenu('submenu-perfil')">Perfil</a>
       <ul class="submenu" id="submenu-perfil" hidden>
         <li><a href="/perfil/modificar">Modificar perfil</a></li>
-        <li><a href="/dashboard/login.html">Cerrar sesión</a></li>
+        <li>
+          <!-- Botón de cerrar sesión -->
+          <form action="{{ url_for('logout') }}" method="post" class="logout-form">
+            <button type="submit" class="logout-btn">Cerrar sesión</button>
+          </form>
+        </li>
       </ul>
     </li>
   </ul>
-</aside>  
+</aside>

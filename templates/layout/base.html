@@ -8,26 +8,26 @@
   <script defer src="{{ url_for('static', filename='js/menu.js') }}"></script>
 </head>
 <body>
-  <header>
-    <div class="logo-container">
-      <img src="{{ url_for('static', filename='img/logo_gomezmorin.png') }}" alt="PORTAL SERVICIO SOCIAL" class="logo-img">
+
+  <!-- HEADER CON LOGO Y BOTÓN -->
+  <div class="header-top">
+    <div class="logo-header">
+      <img src="{{ url_for('static', filename='img/logo_gomezmorin.png') }}"
+           alt="PORTAL SERVICIO SOCIAL"
+           class="logo-img">
     </div>
-  </header>
-
-  <!-- Contenedor horizontal -->
-  <div class="dashboard-wrapper">
-    <!-- Menú lateral cargado automáticamente -->
-    {% include "layout/menu_general.html" %}
-
-    <!-- Contenido principal de cada página hija -->
-    {% block contenido %}{% endblock %}
+    <form class="logout-form" method="POST" action="{{ url_for('logout') }}">
+      <button class="logout-button" title="Cerrar sesión">⏻</button>
+    </form>
   </div>
 
-  <footer>
-    <p>&copy; PORTAL SERVICIO SOCIAL</p>
-  <main>
+  <div class="dashboard-wrapper">
+    {% block sidebar %}
+      {% include "layout/menu_general.html" %}
+    {% endblock %}
+
     {% block contenido %}{% endblock %}
-  </main>
+  </div>
 
   <footer>
     <p>&copy; CECEQ Gómez Morin</p>
@@ -41,6 +41,9 @@
     window.addEventListener('DOMContentLoaded', () => {
       const submenu = document.getElementById('submenu-alumnos');
       if (submenu) submenu.hidden = false;
+
+      const count = document.querySelectorAll('#sidebar').length;
+      console.log('Sidebars en DOM:', count);
     });
   </script>
 </body>

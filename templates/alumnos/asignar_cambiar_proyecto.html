@@ -3,12 +3,11 @@
 {% block titulo %}Asignar/Cambiar proyecto al alumno{% endblock %}
 
 {% block contenido %}
+<!-- Enlaces a tus estilos globales y de formularios -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/formularios.css') }}">
+
 <main class="dashboard-main">
-  <div class="dashboard-header">
-    <form action="{{ url_for('logout') }}" method="post" class="logout-form">
-      <button type="submit" class="logout-button" title="Cerrar sesión">⏻</button>
-    </form>
-  </div>
 
   <div class="dashboard-body">
     <h2>Asignar/Cambiar proyecto al alumno</h2>
@@ -20,7 +19,7 @@
       <div class="alerta-error">{{ error }}</div>
     {% endif %}
 
-    <form method="post" action="/alumnos/asignar_proyecto" class="formulario-alumno">
+    <form method="post" action="/alumnos/asignar_proyecto" class="formulario formulario--wide">
       <div class="form-secciones">
         <fieldset>
           <legend>Seleccionar alumno</legend>
@@ -51,7 +50,7 @@
       </div>
 
       <div class="form-actions">
-        <button type="submit">Asignar proyecto</button>
+        <button type="submit" class="btn btn-primary">Asignar proyecto</button>
         <a href="/dashboard" class="btn-regresar">Regresar</a>
       </div>
     </form>

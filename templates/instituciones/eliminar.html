@@ -3,21 +3,22 @@
 {% block titulo %}Eliminar institución{% endblock %}
 
 {% block contenido %}
-<main class="dashboard-main">
-  <div class="dashboard-header">
-    <form action="{{ url_for('logout') }}" method="post" class="logout-form">
-      <button type="submit" class="logout-button" title="Cerrar sesión">⏻</button>
-    </form>
-  </div>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/formularios.css') }}">
+
+<main class="dashboard-main" role="main" aria-label="Área principal - Eliminar institución">
 
   <div class="dashboard-body">
     <h2>Eliminar institución</h2>
 
-    <form method="post" action="/instituciones/eliminar" class="formulario-institucion">
+    <form method="post" action="/instituciones/eliminar" class="formulario formulario--wide" role="form" aria-label="Formulario eliminar institución">
+
       <fieldset>
         <legend>Seleccionar institución</legend>
+
         <label for="institucion">Institución:</label>
-        <select name="institucion" id="institucion" required>
+        <select name="institucion" id="institucion" class="formulario-select" required>
           <option value="">Seleccione la institución...</option>
           {% for institucion in instituciones %}
             <option value="{{ institucion.id }}">{{ institucion.nombre }}</option>
@@ -25,13 +26,17 @@
         </select>
       </fieldset>
 
-      <div class="form-actions">
-        <button type="submit" onclick="return confirm('¿Estás segura de que deseas eliminar esta institución?')">
+      <div class="form-actions" role="group" aria-label="Acciones del formulario">
+        <button type="submit" class="btn btn-delete"
+                onclick="return confirm('¿Estás segura de que deseas eliminar esta institución?')">
           🗑️ Eliminar institución
         </button>
+
         <a href="/dashboard" class="btn-regresar">Regresar</a>
       </div>
+
     </form>
   </div>
 </main>
+
 {% endblock %}

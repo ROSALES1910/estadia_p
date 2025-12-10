@@ -3,12 +3,10 @@
 {% block titulo %}Incidencias{% endblock %}
 
 {% block contenido %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/formularios.css') }}">
+
 <main class="dashboard-main">
-  <div class="dashboard-header">
-    <form action="{{ url_for('logout') }}" method="post" class="logout-form">
-      <button type="submit" class="logout-button" title="Cerrar sesión">⏻</button>
-    </form>
-  </div>
 
   <div class="dashboard-body">
     <h2>Incidencias</h2>

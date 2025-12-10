@@ -3,36 +3,40 @@
 {% block titulo %}Consulta de instituciones{% endblock %}
 
 {% block contenido %}
-<main class="dashboard-main">
-  <div class="dashboard-header">
-    <form action="{{ url_for('logout') }}" method="post" class="logout-form">
-      <button type="submit" class="logout-button" title="Cerrar sesión">⏻</button>
-    </form>
-  </div>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/formularios.css') }}">
 
+<main class="dashboard-main" role="main" aria-label="Área principal - Consulta de instituciones">
   <div class="dashboard-body">
     <h2>Consulta de instituciones</h2>
 
-    <table class="tabla-instituciones">
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Responsable</th>
-          <th>Cargo del responsable</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for institucion in instituciones %}
-        <tr>
-          <td>{{ institucion.nombre }}</td>
-          <td>{{ institucion.responsable }}</td>
-          <td>{{ institucion.cargo }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+    <div class="table-responsive" role="region" aria-label="Listado de instituciones">
+      <table class="tabla-instituciones tabla-resultados" role="table" aria-describedby="instituciones-desc">
+        <caption id="instituciones-desc" class="sr-only">Listado de instituciones registradas</caption>
+        <thead>
+          <tr>
+            <th scope="col">Nombre</th>
+            <th scope="col">Responsable</th>
+            <th scope="col">Cargo del responsable</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for institucion in instituciones %}
+          <tr>
+            <td>{{ institucion.nombre }}</td>
+            <td>{{ institucion.responsable }}</td>
+            <td>{{ institucion.cargo }}</td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="3">No hay instituciones registradas.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
 
-    <div class="form-actions">
+    <div class="form-actions" role="group" aria-label="Acciones">
       <a href="/dashboard" class="btn-regresar">Regresar</a>
     </div>
   </div>

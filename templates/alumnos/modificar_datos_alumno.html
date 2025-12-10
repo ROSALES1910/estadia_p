@@ -2,93 +2,15 @@
 
 {% block titulo %}Modificar datos del alumno{% endblock %}
 
+{% block menu %}
+  {% include "layout/menu_general.html" %}
+{% endblock %}
+
 {% block contenido %}
-<style>
-  .btn-regresar {
-    display: inline-block;
-    margin-left: 1rem;
-    padding: 0.5rem 1rem;
-    background-color: #555;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 4px;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-  }
-
-  .btn-regresar:hover {
-    background-color: #333;
-  }
-
-  .form-actions {
-    margin-top: 1.5rem;
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-  }
-
-  .formulario-alumno fieldset {
-    border: 1px solid #ccc;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    border-radius: 6px;
-  }
-
-  .formulario-alumno label {
-    display: block;
-    margin-top: 0.8rem;
-    font-weight: bold;
-  }
-
-  .formulario-alumno input,
-  .formulario-alumno select,
-  .formulario-alumno textarea {
-    width: 100%;
-    padding: 0.4rem;
-    margin-top: 0.2rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: #f9f9f9;
-  }
-
-  .form-secciones {
-    display: flex;
-    gap: 2rem;
-    flex-wrap: wrap;
-  }
-
-  .form-secciones fieldset {
-    flex: 1 1 45%;
-    min-width: 300px;
-  }
-
-  .form-full {
-    margin-top: 1rem;
-  }
-
-  .alerta-exito {
-    background-color: #d4edda;
-    color: #155724;
-    padding: 0.8rem;
-    border-radius: 4px;
-    margin-bottom: 1rem;
-  }
-
-  .alerta-error {
-    background-color: #f8d7da;
-    color: #721c24;
-    padding: 0.8rem;
-    border-radius: 4px;
-    margin-bottom: 1rem;
-  }
-</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/formularios.css') }}">
 
 <main class="dashboard-main">
-  <div class="dashboard-header">
-    <form action="{{ url_for('logout') }}" method="post" class="logout-form">
-      <button type="submit" class="logout-button" title="Cerrar sesión">⏻</button>
-    </form>
-  </div>
 
   <div class="dashboard-body">
     <h2>Modificar datos del alumno</h2>
@@ -100,7 +22,7 @@
       <div class="alerta-error">{{ error }}</div>
     {% endif %}
 
-    <form method="post" action="/alumnos/modificar" class="formulario-alumno">
+    <form method="post" action="/alumnos/modificar" class="formulario">
       <fieldset>
         <legend>Seleccionar alumno</legend>
         <label for="alumno">Alumno:</label>
@@ -161,7 +83,7 @@
       </div>
 
       <div class="form-actions">
-        <button type="submit">Guardar cambios</button>
+        <button type="submit" class="btn btn-primary">Guardar cambios</button>
         <a href="/dashboard" class="btn-regresar">Regresar</a>
       </div>
     </form>

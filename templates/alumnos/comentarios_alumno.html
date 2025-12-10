@@ -2,78 +2,16 @@
 
 {% block titulo %}Comentarios del alumno{% endblock %}
 
+{% block menu %}
+  {% include "layout/menu_general.html" %}
+{% endblock %}
+
 {% block contenido %}
-<style>
-  .btn-regresar {
-    display: inline-block;
-    margin-left: 1rem;
-    padding: 0.5rem 1rem;
-    background-color: #555;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 4px;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-  }
-
-  .btn-regresar:hover {
-    background-color: #333;
-  }
-
-  .form-actions {
-    margin-top: 1.5rem;
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-  }
-
-  .formulario-alumno fieldset {
-    border: 1px solid #ccc;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    border-radius: 6px;
-  }
-
-  .formulario-alumno label {
-    display: block;
-    margin-top: 0.8rem;
-    font-weight: bold;
-  }
-
-  .formulario-alumno input,
-  .formulario-alumno select,
-  .formulario-alumno textarea {
-    width: 100%;
-    padding: 0.4rem;
-    margin-top: 0.2rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: #f9f9f9;
-  }
-
-  .alerta-exito {
-    background-color: #d4edda;
-    color: #155724;
-    padding: 0.8rem;
-    border-radius: 4px;
-    margin-bottom: 1rem;
-  }
-
-  .alerta-error {
-    background-color: #f8d7da;
-    color: #721c24;
-    padding: 0.8rem;
-    border-radius: 4px;
-    margin-bottom: 1rem;
-  }
-</style>
+<!-- Enlaces a tus estilos globales y de formularios -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/formularios.css') }}">
 
 <main class="dashboard-main">
-  <div class="dashboard-header">
-    <form action="{{ url_for('logout') }}" method="post" class="logout-form">
-      <button type="submit" class="logout-button" title="Cerrar sesión">⏻</button>
-    </form>
-  </div>
 
   <div class="dashboard-body">
     <h2>Comentarios del alumno</h2>
@@ -85,7 +23,7 @@
       <div class="alerta-error">{{ error }}</div>
     {% endif %}
 
-    <form method="POST" action="/alumnos/comentarios" class="formulario-alumno">
+    <form method="POST" action="/alumnos/comentarios" class="formulario">
       <fieldset>
         <legend>Seleccionar alumno</legend>
         <label for="alumno">Alumno:</label>
@@ -104,7 +42,7 @@
       </fieldset>
 
       <div class="form-actions">
-        <button type="submit">Guardar comentario</button>
+        <button type="submit" class="btn btn-primary">Guardar comentario</button>
         <a href="/dashboard" class="btn-regresar">Regresar</a>
       </div>
     </form>

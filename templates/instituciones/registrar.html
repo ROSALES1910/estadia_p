@@ -3,35 +3,37 @@
 {% block titulo %}Alta de instituciones{% endblock %}
 
 {% block contenido %}
-<main class="dashboard-main">
-  <div class="dashboard-header">
-    <form action="{{ url_for('logout') }}" method="post" class="logout-form">
-      <button type="submit" class="logout-button" title="Cerrar sesión">⏻</button>
-    </form>
-  </div>
 
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/formularios.css') }}">
+
+<main class="dashboard-main" role="main" aria-label="Área principal - Alta de instituciones">
   <div class="dashboard-body">
     <h2>Alta de instituciones</h2>
 
-    <form method="post" action="/instituciones/registrar" class="formulario-institucion">
+    <form method="post" action="/instituciones/registrar" class="formulario formulario--wide" role="form" aria-label="Formulario alta de instituciones">
+
       <fieldset>
         <legend>Datos de la institución</legend>
 
-        <label for="nombre">Nombre:</label>
-        <input type="text" name="nombre" id="nombre" required>
+        <label for="nombre">Nombre de la institución:</label>
+        <input type="text" name="nombre" id="nombre" class="formulario-input" required>
 
-        <label for="responsable">Responsable de la institución:</label>
-        <input type="text" name="responsable" id="responsable" required>
+        <label for="responsable">Responsable:</label>
+        <input type="text" name="responsable" id="responsable" class="formulario-input" required>
 
         <label for="cargo">Cargo del responsable:</label>
-        <input type="text" name="cargo" id="cargo" required>
+        <input type="text" name="cargo" id="cargo" class="formulario-input" required>
+
       </fieldset>
 
-      <div class="form-actions">
-        <button type="submit">Registrar institución</button>
+      <div class="form-actions" role="group" aria-label="Acciones del formulario">
+        <button type="submit" class="btn btn-primary">Registrar institución</button>
         <a href="/dashboard" class="btn-regresar">Regresar</a>
       </div>
+
     </form>
   </div>
 </main>
+
 {% endblock %}

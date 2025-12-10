@@ -2,118 +2,180 @@
 
 {% block titulo %}Consulta de alumnos{% endblock %}
 
-{% block contenido %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/consulta_alumnos.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/consulta_alumnos_extra.css') }}">
+{% block menu %}
+  {% include "layout/menu_general.html" %}
+{% endblock %}
 
-<main class="dashboard-main">
-  <div class="dashboard-body">
+{% block contenido %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/formularios.css') }}">
+
+<main class="dashboard-main" role="main" aria-label="Área principal - Consulta de alumnos">
+  <div class="dashboard-body" aria-live="polite">
     <h2>Consulta de alumnos</h2>
 
-    <div class="busqueda-container">
+    <!-- Buscador -->
+    <div class="busqueda-container" role="search" aria-label="Buscar alumno">
       <label for="busqueda">Buscar por nombre:</label>
-      <input type="text" id="busqueda" placeholder="Escribe un nombre..." title="Buscar por nombre">
-      <ul id="resultados"></ul>
+      <input
+        type="text"
+        id="busqueda"
+        name="busqueda"
+        class="formulario-input"
+        placeholder="Escribe un nombre (mín. 2 caracteres)..."
+        title="Escribe el nombre del alumno para buscar"
+        autocomplete="off"
+        aria-label="Buscar alumno por nombre">
+      <ul id="resultados" role="listbox" aria-label="Resultados de búsqueda"></ul>
     </div>
 
-    <fieldset class="datos-alumno">
-      <legend>Datos del alumno</legend>
-      <label for="nombre" id="label-nombre">Nombre:</label>
-      <input type="text" id="nombre" name="nombre" readonly placeholder="Nombre del alumno" title="Nombre del alumno" aria-labelledby="label-nombre">
+    <!-- Datos del alumno -->
+    <fieldset class="datos-alumno formulario" aria-labelledby="datos-alumno-legend">
+      <legend id="datos-alumno-legend">Datos del alumno</legend>
 
-      <label for="apellido_paterno" id="label-apellido-paterno">Apellido paterno:</label>
-      <input type="text" id="apellido_paterno" name="apellido_paterno" readonly placeholder="Apellido paterno" title="Apellido paterno" aria-labelledby="label-apellido-paterno">
+      <label for="nombre">Nombre:</label>
+      <input type="text" id="nombre" name="nombre" class="formulario-input" placeholder="Nombre del alumno" readonly aria-readonly="true">
 
-      <label for="apellido_materno" id="label-apellido-materno">Apellido materno:</label>
-      <input type="text" id="apellido_materno" name="apellido_materno" readonly placeholder="Apellido materno" title="Apellido materno" aria-labelledby="label-apellido-materno">
+      <label for="apellido_paterno">Apellido paterno:</label>
+      <input type="text" id="apellido_paterno" name="apellido_paterno" class="formulario-input" placeholder="Apellido paterno" readonly aria-readonly="true">
 
-      <label for="telefono" id="label-telefono">Teléfono:</label>
-      <input type="text" id="telefono" name="telefono" readonly placeholder="Teléfono" title="Teléfono" aria-labelledby="label-telefono">
+      <label for="apellido_materno">Apellido materno:</label>
+      <input type="text" id="apellido_materno" name="apellido_materno" class="formulario-input" placeholder="Apellido materno" readonly aria-readonly="true">
 
-      <label for="email" id="label-email">Correo:</label>
-      <input type="email" id="email" name="email" readonly placeholder="Correo electrónico" title="Correo electrónico" aria-labelledby="label-email">
+      <label for="telefono">Teléfono:</label>
+      <input type="text" id="telefono" name="telefono" class="formulario-input" placeholder="Teléfono" readonly aria-readonly="true">
+
+      <label for="email">Correo:</label>
+      <input type="email" id="email" name="email" class="formulario-input" placeholder="Correo electrónico" readonly aria-readonly="true">
     </fieldset>
 
-    <div class="form-actions">
-      <button type="button" id="editar">Editar datos</button>
+    <!-- Acciones -->
+    <div class="form-actions" role="group" aria-label="Acciones del formulario">
+      <button type="button" id="editar" aria-controls="acciones-alumno" class="btn btn-primary">Editar datos</button>
       <a href="/dashboard" class="btn-regresar">Regresar</a>
     </div>
 
-    <div class="acciones-alumno oculto" id="acciones-alumno">
+    <!-- Acciones disponibles (siempre visibles; deshabilitadas hasta seleccionar alumno) -->
+    <div class="acciones-alumno" id="acciones-alumno" role="region" aria-hidden="true" aria-label="Acciones disponibles del alumno">
       <h3>Acciones disponibles</h3>
       <ul>
-        <li><a id="link-modificar" href="#"><span>✏️</span> Modificar datos</a></li>
-        <li><a id="link-proyecto" href="#"><span>📂</span> Asignar/Cambiar proyecto</a></li>
-        <li><a id="link-horario" href="#"><span>📅</span> Asignar/Cambiar horario</a></li>
-        <li><a id="link-comentarios" href="#"><span>💬</span> Ver comentarios</a></li>
-        <li><a id="link-log" href="#"><span>📜</span> Ver log</a></li>
-        <li><a id="link-eliminar" href="#"><span>🗑️</span> Eliminar alumno</a></li>
+        <li><a id="link-modificar" class="accion-link disabled" href="#"><span aria-hidden="true">✏️</span> Modificar datos</a></li>
+        <li><a id="link-proyecto" class="accion-link disabled" href="#"><span aria-hidden="true">📂</span> Asignar/Cambiar proyecto</a></li>
+        <li><a id="link-horario" class="accion-link disabled" href="#"><span aria-hidden="true">📅</span> Asignar/Cambiar horario</a></li>
+        <li><a id="link-comentarios" class="accion-link disabled" href="#"><span aria-hidden="true">💬</span> Ver comentarios</a></li>
+        <li><a id="link-log" class="accion-link disabled" href="#"><span aria-hidden="true">📜</span> Ver log</a></li>
+        <li><a id="link-eliminar" class="accion-link disabled" href="#"><span aria-hidden="true">🗑️</span> Eliminar alumno</a></li>
       </ul>
     </div>
   </div>
 </main>
 
 <script>
-let matriculaSeleccionada = null;
+  function toggleSubmenu(id) {
+    const submenu = document.getElementById(id);
+    if (!submenu) return;
+    submenu.hidden = !submenu.hidden;
+  }
 
-document.getElementById('busqueda').addEventListener('input', async function () {
-  const nombre = this.value.trim();
-  const resultados = document.getElementById('resultados');
-  resultados.innerHTML = '';
+  window.addEventListener('DOMContentLoaded', () => {
+    const submenu = document.getElementById('submenu-alumnos');
+    if (submenu) submenu.hidden = false;
 
-  if (nombre.length < 2) return;
+    // Inicializar estado de enlaces (desactivados)
+    desactivarEnlaces();
+  });
 
-  try {
-    const res = await fetch(`/api/alumnos/buscar?nombre=${encodeURIComponent(nombre)}`);
-    const alumnos = await res.json();
+  let matriculaSeleccionada = null;
 
-    if (alumnos.length === 0) {
-      resultados.innerHTML = '<li>No se encontraron coincidencias</li>';
+  // Referencias a enlaces de acciones
+  const linkModificar = document.getElementById('link-modificar');
+  const linkProyecto  = document.getElementById('link-proyecto');
+  const linkHorario   = document.getElementById('link-horario');
+  const linkComentarios = document.getElementById('link-comentarios');
+  const linkLog = document.getElementById('link-log');
+  const linkEliminar = document.getElementById('link-eliminar');
+
+  function desactivarEnlaces() {
+    [linkModificar, linkProyecto, linkHorario, linkComentarios, linkLog, linkEliminar].forEach(a => {
+      a.classList.add('disabled');
+      a.setAttribute('aria-disabled', 'true');
+      a.href = '#';
+    });
+    document.getElementById('acciones-alumno').setAttribute('aria-hidden', 'true');
+  }
+
+  function activarEnlaces(matricula) {
+    if (!matricula) return desactivarEnlaces();
+
+    linkModificar.classList.remove('disabled'); linkModificar.removeAttribute('aria-disabled'); linkModificar.href = `/alumnos/modificar?matricula=${encodeURIComponent(matricula)}`;
+    linkProyecto.classList.remove('disabled');  linkProyecto.removeAttribute('aria-disabled');  linkProyecto.href  = `/alumnos/asignar_proyecto?matricula=${encodeURIComponent(matricula)}`;
+    linkHorario.classList.remove('disabled');   linkHorario.removeAttribute('aria-disabled');   linkHorario.href   = `/alumnos/asignar_horario?matricula=${encodeURIComponent(matricula)}`;
+    linkComentarios.classList.remove('disabled'); linkComentarios.removeAttribute('aria-disabled'); linkComentarios.href = `/alumnos/comentarios?matricula=${encodeURIComponent(matricula)}`;
+    linkLog.classList.remove('disabled');        linkLog.removeAttribute('aria-disabled');        linkLog.href        = `/alumnos/log?matricula=${encodeURIComponent(matricula)}`;
+    linkEliminar.classList.remove('disabled');   linkEliminar.removeAttribute('aria-disabled');   linkEliminar.href   = `/alumnos/eliminar?matricula=${encodeURIComponent(matricula)}`;
+
+    document.getElementById('acciones-alumno').setAttribute('aria-hidden', 'false');
+  }
+
+  document.getElementById('busqueda').addEventListener('input', async function () {
+    const nombre = this.value.trim();
+    const resultados = document.getElementById('resultados');
+    resultados.innerHTML = '';
+
+    if (nombre.length < 2) return;
+
+    try {
+      const res = await fetch(`/api/alumnos/buscar?nombre=${encodeURIComponent(nombre)}`);
+      const alumnos = await res.json();
+
+      if (!alumnos || alumnos.length === 0) {
+        resultados.innerHTML = '<li>No se encontraron coincidencias</li>';
+        return;
+      }
+
+      alumnos.forEach(a => {
+        const li = document.createElement('li');
+        li.textContent = `${a.nombre} ${a.apellido_paterno} ${a.apellido_materno} (${a.matricula})`;
+        li.tabIndex = 0;
+        li.addEventListener('click', () => {
+          cargarDatosAlumno(a.matricula);
+        });
+        li.addEventListener('keydown', (e) => { if (e.key === 'Enter') cargarDatosAlumno(a.matricula); });
+        resultados.appendChild(li);
+      });
+    } catch (error) {
+      console.error('Error al buscar alumnos:', error);
+    }
+  });
+
+  async function cargarDatosAlumno(matricula) {
+    matriculaSeleccionada = matricula;
+
+    try {
+      const res = await fetch(`/api/alumnos/datos?matricula=${encodeURIComponent(matricula)}`);
+      const datos = await res.json();
+
+      document.getElementById('nombre').value = datos?.nombre || '';
+      document.getElementById('apellido_paterno').value = datos?.apellido_paterno || '';
+      document.getElementById('apellido_materno').value = datos?.apellido_materno || '';
+      document.getElementById('telefono').value = datos?.telefono || '';
+      document.getElementById('email').value = datos?.e_mail || '';
+
+      // Activar enlaces con la matrícula seleccionada
+      activarEnlaces(matricula);
+    } catch (error) {
+      console.error('Error al cargar datos del alumno:', error);
+      desactivarEnlaces();
+    }
+  }
+
+  document.getElementById('editar').addEventListener('click', function () {
+    if (!matriculaSeleccionada) {
+      alert('Selecciona primero un alumno para habilitar las acciones.');
       return;
     }
-
-    alumnos.forEach(a => {
-      const li = document.createElement('li');
-      li.textContent = `${a.nombre} ${a.apellido_paterno} ${a.apellido_materno} (${a.matricula})`;
-      li.addEventListener('click', () => cargarDatosAlumno(a.matricula));
-      resultados.appendChild(li);
-    });
-  } catch (error) {
-    console.error('Error al buscar alumnos:', error);
-  }
-});
-
-async function cargarDatosAlumno(matricula) {
-  matriculaSeleccionada = matricula;
-  document.getElementById('acciones-alumno').classList.add('oculto');
-  document.getElementById('acciones-alumno').style.display = 'none';
-
-  try {
-    const res = await fetch(`/api/alumnos/datos?matricula=${encodeURIComponent(matricula)}`);
-    const datos = await res.json();
-
-    if (datos) {
-      document.getElementById('nombre').value = datos.nombre || '';
-      document.getElementById('apellido_paterno').value = datos.apellido_paterno || '';
-      document.getElementById('apellido_materno').value = datos.apellido_materno || '';
-      document.getElementById('telefono').value = datos.telefono || '';
-      document.getElementById('email').value = datos.e_mail || '';
-    }
-  } catch (error) {
-    console.error('Error al cargar datos del alumno:', error);
-  }
-}
-
-document.getElementById('editar').addEventListener('click', function () {
-  if (!matriculaSeleccionada) return;
-  document.getElementById('acciones-alumno').classList.remove('oculto');
-
-  document.getElementById('link-modificar').href = `/alumnos/modificar?matricula=${matriculaSeleccionada}`;
-  document.getElementById('link-proyecto').href = `/alumnos/asignar_proyecto?matricula=${matriculaSeleccionada}`;
-  document.getElementById('link-horario').href = `/alumnos/asignar_horario?matricula=${matriculaSeleccionada}`;
-  document.getElementById('link-comentarios').href = `/alumnos/comentarios?matricula=${matriculaSeleccionada}`;
-  document.getElementById('link-log').href = `/alumnos/log?matricula=${matriculaSeleccionada}`;
-  document.getElementById('link-eliminar').href = `/alumnos/eliminar?matricula=${matriculaSeleccionada}`;
-});
+    // Redirige a la página de modificación
+    window.location.href = `/alumnos/modificar?matricula=${encodeURIComponent(matriculaSeleccionada)}`;
+  });
 </script>
 {% endblock %}
