@@ -599,59 +599,29 @@ def constancia_horas():
         print(f"Generando constancia de horas para el alumno {alumno}")
         return redirect(url_for('constancia_horas'))
 
-    alumnos = list(alumnos_col.find({}, {"_id": 0, "matricula": 1, "nombre": 1}))
-    return render_template('documentos/horas.html', alumnos=alumnos)
-# ========== INSTITUCIONES ==========
-@app.route('/instituciones/registrar', methods=['GET', 'POST'])
-def registrar_institucion():
+    # ========== LOGIN ==========
+@app.route('/login', methods=['GET', 'POST'])
+def login():
     if request.method == 'POST':
-        instituciones_col.insert_one({
-            "nombre": request.form['nombre'],
-            "responsable": request.form['responsable'],
-            "cargo": request.form['cargo']
-        })
-        return redirect(url_for('registrar_institucion'))
-    return render_template('instituciones/registrar.html')
+        username = request.form.get('username', '').strip()
+        password = request.form.get('password', '').strip()
 
-@app.route('/instituciones/modificar', methods=['GET', 'POST'])
-def modificar_institucion():
-    if request.method == 'POST':
-        institucion_id = request.form['institucion']
-        cambios = {}
-        if request.form['nuevo_nombre']:
-            cambios['nombre'] = request.form['nuevo_nombre']
-        if request.form['nuevo_responsable']:
-            cambios['responsable'] = request.form['nuevo_responsable']
-        if request.form['nuevo_cargo']:
-            cambios['cargo'] = request.form['nuevo_cargo']
-        if cambios:
-            instituciones_col.update_one({"_id": institucion_id}, {"$set": cambios})
-        return redirect(url_for('modificar_institucion'))
+        # Buscar por nombre_usuario en lugar de username
+        usuario = usuarios_col.find_one({"nombre_usuario": username}, {"_id": 0})
 
-    instituciones = list(instituciones_col.find({}, {"_id": 1, "nombre": 1, "responsable": 1, "cargo": 1}))
-    return render_template('instituciones/modificar.html', instituciones=instituciones)
+        # Validar credenciales y que el usuario esté activo
+        # if usuario and usuario.get("password") == password and usuario.get("status") == "Activo":
+        if usuario and usuario.get("status") == "Activo":
+            session['usuario'] = usuario['nombre_usuario']
+            session['rol'] = usuario.get('rol', 'alumno')  # si no existe rol, por defecto 'alumno'
+            return redirect('/dashboard')
+        else:
+            return render_template('auth/login.html', error="Credenciales inválidas o usuario inactivo")
 
-@app.route('/instituciones/eliminar', methods=['GET', 'POST'])
-def eliminar_institucion():
-    if request.method == 'POST':
-        institucion_id = request.form['institucion']
-        instituciones_col.delete_one({"_id": institucion_id})
-        return redirect(url_for('eliminar_institucion'))
-
-    instituciones = list(instituciones_col.find({}, {"_id": 1, "nombre": 1}))
-    return render_template('instituciones/eliminar.html', instituciones=instituciones)
-
-@app.route('/instituciones/consulta')
-def consulta_instituciones():
-    instituciones = list(instituciones_col.find({}, {"_id": 0}))
-    return render_template('instituciones/consulta.html', instituciones=instituciones)
-# ========== ERROR GENÉRICO ==========
-@app.errorhandler(404)
-def pagina_no_encontrada(e):
-    return render_template('utils/error.html', error="Página no encontrada"), 404
-
-
-
-# ========== INICIO ==========
-if __name__ == '__main__':
-    app.run(debug=True)
+    return render_template('auth/login.html')
+# ========== LOGOUT ==========
+@app.route('/logout', methods=['POST'])
+def logout():
+    session.clear()
+    flash('Sesión cerrada correctamente.', 'info')
+    return redirect(url_for('login'))  # Redirige al login institucional
