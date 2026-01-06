@@ -1,3 +1,4 @@
+/* ========== BASE GENERAL ========== */
 body {
   margin: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -7,20 +8,78 @@ body {
   min-height: 100vh;
 }
 
-/* Logo institucional */
-header {
+/* ========== HEADER SUPERIOR AZUL CLARO ========== */
+.header-top {
+  width: 100%;
+  background-color: #b5ddff;
+  padding: 0 30px;
   display: flex;
   align-items: center;
-  padding: 20px 40px;
-  background-color: transparent;
+  justify-content: space-between;
+  box-sizing: border-box;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 120px; /* igual que el logo */
+  z-index: 20;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
-header img {
-  height: 160px;
+/* Logo */
+.logo-header {
+  position: relative;
+  z-index: 20;
 }
 
-/* Contenedor principal */
-main {
+.logo-img {
+  height: 120px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 2px rgba(0,0,0,0.2));
+}
+
+/* ========== LOGOUT EN ESQUINA SUPERIOR DERECHA ========== */
+.logout-form {
+  position: relative;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.logout-button {
+  font-size: 20px;
+  background-color: #ff4d4d;
+  border: none;
+  border-radius: 50%;
+  color: white;
+  width: 42px;
+  height: 42px;
+  cursor: pointer;
+  box-shadow: 0 0 6px rgba(0,0,0,0.2);
+  transition: background-color 0.3s ease;
+}
+
+.logout-button:hover {
+  background-color: #cc0000;
+}
+
+/* ========== CORRECCIÓN LISTAS SOLO PARA CONTENIDO (NO MENU) ========== */
+.dashboard-body ul,
+.dashboard-body ol {
+  margin: 0 0 1rem 1.4rem;
+  padding: 0;
+}
+
+.dashboard-body li {
+  margin-bottom: 4px;
+  list-style: disc;
+  font-size: 15px;
+  line-height: 1.4;
+  color: #333;
+}
+
+/* ========== LOGIN ========== */
+main.login-main {
   flex: 1;
   display: flex;
   justify-content: center;
@@ -28,18 +87,16 @@ main {
   padding-top: 40px;
 }
 
-/* Cuadro del login */
 .login-box {
   background-color: #2c2c2c;
   border: 2px solid #007bff;
   padding: 40px;
   border-radius: 6px;
   width: 360px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
   color: white;
 }
 
-/* Título */
 .login-title {
   text-align: center;
   font-size: 26px;
@@ -47,7 +104,6 @@ main {
   color: #ffffff;
 }
 
-/* Campos */
 .login-input {
   width: 100%;
   padding: 12px;
@@ -66,7 +122,6 @@ main {
   background-color: #555;
 }
 
-/* Botón */
 .login-button {
   width: 100%;
   padding: 12px;
@@ -83,7 +138,6 @@ main {
   background-color: #0056b3;
 }
 
-/* Error */
 .login-error {
   color: #ff4d4d;
   text-align: center;
@@ -98,62 +152,55 @@ main {
   position: relative;
   min-height: 100vh;
   box-sizing: border-box;
+  margin-top: 120px; /* evita que invada el header */
 }
 
-/* Sidebar general */
 .sidebar {
   width: 240px;
-  background-color: #000000;
+  background: linear-gradient(180deg, #1f1f1f, #2c2c2c);
   color: white;
   padding: 16px;
   box-sizing: border-box;
-  min-height: 100vh;
-  height: auto;
-  font-family: 'Segoe UI', sans-serif;
+  min-height: calc(100vh - 120px);
+  box-shadow: 2px 0 6px rgba(0,0,0,0.15);
 }
 
-/* Menú principal */
+/* MENU SIN BULLETS */
 .sidebar-menu {
-  list-style: none;
+  list-style: none !important;
   padding: 0;
   margin: 0;
+}
+
+.sidebar-menu li {
+  list-style: none !important;
 }
 
 .menu-principal {
   display: block;
   color: white;
-  background-color: transparent;
   text-decoration: none;
   font-size: 15px;
   padding: 6px 10px;
   margin-bottom: 2px;
   border-radius: 4px;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
 }
 
 .menu-principal:hover {
-  background-color: #1a1a1a;
+  background-color: #007bff;
 }
 
-/* Submenú */
 .sidebar-menu li ul.submenu {
   list-style: none;
   padding-left: 14px;
   margin-top: 2px;
-  display: block;
-}
-
-.sidebar-menu li ul.submenu[hidden] {
-  display: none;
-}
-
-.sidebar-menu li ul.submenu li {
-  margin-bottom: 2px;
 }
 
 .sidebar-menu li ul.submenu li a {
   display: block;
   color: #d3d3d3 !important;
-  background-color: transparent !important;
   text-decoration: none;
   font-size: 14px;
   padding: 4px 10px;
@@ -165,26 +212,7 @@ main {
   color: white !important;
 }
 
-/* Ítems del menú */
-.sidebar-menu li {
-  margin-bottom: 14px;
-}
-
-.sidebar-menu a {
-  color: white;
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 15px;
-  display: block;
-  padding: 6px 10px;
-  border-radius: 4px;
-}
-
-.sidebar-menu a:hover {
-  background-color: #007bff;
-}
-
-/* Área principal */
+/* ========== CONTENIDO PRINCIPAL ========== */
 .dashboard-main {
   flex: 1;
   background-color: #f5f5f5;
@@ -197,43 +225,6 @@ main {
   overflow-y: auto;
 }
 
-/* Encabezado */
-.dashboard-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  width: 100%;
-  max-width: 1000px;
-  padding: 0 32px;
-  box-sizing: border-box;
-}
-
-.dashboard-header img {
-  height: 80px;
-}
-
-/* Botón de apagado fijo en esquina superior derecha */
-.logout-button {
-  position: absolute;
-  top: 30px;
-  right: 30px;
-  font-size: 20px;
-  background-color: #007bff;
-  border: none;
-  border-radius: 50%;
-  color: white;
-  width: 40px;
-  height: 40px;
-  cursor: pointer;
-  z-index: 100;
-}
-
-.logout-button:hover {
-  background-color: #0056b3;
-}
-
-/* Contenido */
 .dashboard-body {
   width: 100%;
   max-width: 1000px;
@@ -251,96 +242,54 @@ main {
   color: #333;
 }
 
-/* ========== FORMULARIO DE REGISTRO DE ALUMNO ========== */
-.formulario-alumno {
-  width: 100%;
-  background-color: #fff;
-  padding: 32px;
-  border-radius: 8px;
-  box-shadow: 0 0 6px rgba(0,0,0,0.1);
-  box-sizing: border-box;
-}
-
-.form-secciones {
-  display: flex;
-  gap: 32px;
-  flex-wrap: wrap;
-}
-
-.form-secciones fieldset {
-  flex: 1;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  padding: 20px;
-  box-sizing: border-box;
-}
-
-.form-secciones legend {
-  font-weight: bold;
-  font-size: 16px;
-  margin-bottom: 12px;
-  color: #333;
-}
-
-.form-secciones label {
-  display: block;
-  font-weight: bold;
-  margin-top: 16px;
-  margin-bottom: 4px;
-  color: #333;
-}
-
-.form-secciones input,
-.form-secciones select {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 14px;
-  background-color: #f9f9f9;
-  color: #333;
-  box-sizing: border-box;
-}
-
-.form-full {
-  margin-top: 24px;
-}
-
-.form-full label {
-  font-weight: bold;
-  display: block;
-  margin-bottom: 8px;
-  color: #333;
-}
-
-.form-full textarea {
-  width: 100%;
-  min-height: 100px;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  resize: vertical;
-  font-size: 14px;
-  background-color: #f9f9f9;
-  color: #333;
-  box-sizing: border-box;
-}
-
+/* ========== BOTONES Y ALERTAS ========== */
 .form-actions {
-  margin-top: 32px;
-  text-align: right;
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 1rem;
 }
 
-button[type="submit"] {
+.btn-regresar {
+  padding: 0.5rem 1rem;
+  background-color: #555;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.btn-regresar:hover {
+  background-color: #333;
+}
+
+button[type="submit"].btn-primary {
   background-color: #007bff;
   color: white;
   padding: 10px 24px;
   border: none;
   border-radius: 4px;
   font-size: 15px;
+  font-weight: bold;
   cursor: pointer;
 }
 
-button[type="submit"]:hover {
+button[type="submit"].btn-primary:hover {
   background-color: #0056b3;
+}
+
+.alerta-exito {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 0.8rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.alerta-error {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 0.8rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
 }

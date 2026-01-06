@@ -1,6 +1,16 @@
 {% extends "layout/base.html" %}
 
+{% block titulo %}Resultados de la consulta{% endblock %}
+
+{% block menu %}
+  {% include "layout/menu_general.html" %}
+{% endblock %}
+
 {% block contenido %}
+<!-- Enlaces a tus estilos globales y de formularios -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/formularios.css') }}">
+
 <div class="dashboard-wrapper">
   <main class="dashboard-main">
     <div class="dashboard-body">
@@ -47,7 +57,7 @@
       {% endif %}
 
       <div class="form-actions">
-        <a href="/alumnos/consulta" class="boton-volver">← Nueva consulta</a>
+        <a href="/alumnos/consulta" class="btn-regresar">← Nueva consulta</a>
       </div>
     </div>
   </main>

@@ -1,177 +1,74 @@
 {% extends "layout/base.html" %}
 
+{% block titulo %}Cambiar contraseña al alumno{% endblock %}
+
+{% block menu %}
+  {% include "layout/menu_general.html" %}
+{% endblock %}
+
 {% block contenido %}
-<style>
-  .btn-regresar {
-    display: inline-block;
-    margin-left: 1rem;
-    padding: 0.5rem 1rem;
-    background-color: #555;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 4px;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-  }
+<!-- Enlaza tus estilos globales y de formularios -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/formularios.css') }}">
 
-  .btn-regresar:hover {
-    background-color: #333;
-  }
+<main class="dashboard-main">
 
-  .form-actions {
-    margin-top: 1.5rem;
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-  }
+  <div class="dashboard-body">
+    <h2>Cambiar contraseña al alumno</h2>
 
-  .formulario-alumno fieldset {
-    border: 1px solid #ccc;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    border-radius: 6px;
-  }
+    {% if mensaje %}
+      <div class="alerta-exito">{{ mensaje }}</div>
+    {% endif %}
+    {% if error %}
+      <div class="alerta-error">{{ error }}</div>
+    {% endif %}
 
-  .formulario-alumno label {
-    display: block;
-    margin-top: 0.8rem;
-    font-weight: bold;
-  }
+    <form method="post" action="/alumnos/modificar_contrasena" class="formulario" id="form-contrasena">
+      <fieldset>
+        <legend>Seleccionar alumno</legend>
+        <label for="alumno">Alumno:</label>
+        <select name="alumno" id="alumno" required>
+          <option value="">Selecciona un alumno</option>
+          {% for alumno in alumnos %}
+            <option value="{{ alumno.matricula }}">{{ alumno.nombre }}</option>
+          {% endfor %}
+        </select>
+      </fieldset>
 
-  .formulario-alumno input,
-  .formulario-alumno select {
-    width: 100%;
-    padding: 0.4rem;
-    margin-top: 0.2rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: #f9f9f9;
-  }
-</style>
+      <fieldset>
+        <legend>Nueva contraseña</legend>
+        <label for="contrasena">Contraseña:</label>
+        <input type="password" name="contrasena" id="contrasena" required>
+      </fieldset>
 
-<div class="dashboard-wrapper">
-  <!-- Sidebar institucional -->
-  <aside class="sidebar">
-    <ul class="sidebar-menu">
-      <!-- Alumnos -->
-      <li>
-        <a href="#" class="menu-principal" onclick="toggleSubmenu('submenu-alumnos')">Alumnos</a>
-        <ul class="submenu" id="submenu-alumnos" hidden>
-          <li><a href="/alumnos/registrar">Registrar nuevo alumno</a></li>
-          <li><a href="/alumnos/activar">Activar/Inactivar alumno</a></li>
-          <li><a href="/alumnos/modificar">Modificar datos del alumno</a></li>
-          <li><a href="/alumnos/asignar-proyecto">Asignar/Cambiar proyecto al alumno</a></li>
-          <li><a href="/alumnos/desasignar-proyecto">Desasignar proyecto al alumno</a></li>
-          <li><a href="/alumnos/modificar_contrasena">Cambiar contraseña al alumno</a></li>
-          <li><a href="/alumnos/asignar_horario">Asignar/Cambiar horario al alumno</a></li>
-          <li><a href="/alumnos/horario">Horario alumno</a></li>
-          <li><a href="/alumnos/comentarios">Histórico de comentarios del alumno</a></li>
-          <li><a href="/alumnos/log">Log del alumno</a></li>
-          <li><a href="/alumnos/eliminar">Eliminar alumno</a></li>
-          <li><a href="/alumnos/consulta">Consulta de alumnos</a></li>
-        </ul>
-      </li>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary" id="submit-btn">Actualizar contraseña</button>
+        <a href="/dashboard" class="btn-regresar">Regresar</a>
+      </div>
+    </form>
+  </div>
+</main>
 
-      <!-- Instituciones -->
-      <li>
-        <a href="#" class="menu-principal" onclick="toggleSubmenu('submenu-instituciones')">Instituciones</a>
-        <ul class="submenu" id="submenu-instituciones" hidden>
-          <li><a href="/instituciones/registrar">Registrar nueva institución</a></li>
-          <li><a href="/instituciones/modificar">Modificar institución</a></li>
-          <li><a href="/instituciones/eliminar">Eliminar institución</a></li>
-          <li><a href="/instituciones/consulta">Consultar instituciones</a></li>
-        </ul>
-      </li>
-
-      <!-- Proyectos -->
-      <li>
-        <a href="#" class="menu-principal" onclick="toggleSubmenu('submenu-proyectos')">Proyectos</a>
-        <ul class="submenu" id="submenu-proyectos" hidden>
-          <li><a href="/proyectos/registrar">Registrar nuevo proyecto</a></li>
-          <li><a href="/proyectos/modificar">Modificar datos del proyecto</a></li>
-          <li><a href="/proyectos/terminar">Terminar proyecto</a></li>
-          <li><a href="/proyectos/consulta">Consulta de proyectos</a></li>
-        </ul>
-      </li>
-
-      <!-- Asistencia -->
-      <li>
-        <a href="#" class="menu-principal" onclick="toggleSubmenu('submenu-asistencia')">Asistencia</a>
-        <ul class="submenu" id="submenu-asistencia" hidden>
-          <li><a href="/asistencia/consulta">Consultar asistencia del alumno</a></li>
-          <li><a href="/asistencia/incidencias">Incidencias</a></li>
-        </ul>
-      </li>
-
-      <!-- Documentos -->
-      <li>
-        <a href="#" class="menu-principal" onclick="toggleSubmenu('submenu-documentos')">Documentos</a>
-        <ul class="submenu" id="submenu-documentos" hidden>
-          <li><a href="/documentos/aceptacion">Carta de aceptación</a></li>
-          <li><a href="/documentos/terminacion">Carta de terminación</a></li>
-          <li><a href="/documentos/horas">Constancia de horas</a></li>
-        </ul>
-      </li>
-
-      <!-- Perfil -->
-      <li>
-        <a href="/perfil" class="menu-principal">Perfil</a>
-        <ul class="submenu" id="submenu-perfil" hidden>
-          <li><a href="/perfil/modificar">Modificar perfil</a></li>
-          <li><a href="/dashboard/login.html">Cerrar sesión</a></li>
-        </ul>
-      </li>
-    </ul>
-  </aside>
-
-  <!-- Área principal -->
-  <main class="dashboard-main">
-    <div class="dashboard-header">
-      <button class="logout-button">⏻</button>
-    </div>
-
-    <div class="dashboard-body">
-      <h2>Cambiar contraseña al alumno</h2>
-
-      <form method="post" action="/alumnos/modificar_contrasena" class="formulario-alumno">
-        <fieldset>
-          <legend>Seleccionar alumno</legend>
-          <label for="alumno">Alumno:</label>
-          <select name="alumno" id="alumno" required>
-            <option value="">Selecciona un alumno</option>
-            {% for alumno in alumnos %}
-              <option value="{{ alumno.matricula }}">{{ alumno.nombre }}</option>
-            {% endfor %}
-          </select>
-        </fieldset>
-
-        <fieldset>
-          <legend>Nueva contraseña</legend>
-          <label for="contrasena">Contraseña:</label>
-          <input type="password" name="contrasena" id="contrasena" required>
-        </fieldset>
-
-        <div class="form-actions">
-          <button type="submit">Actualizar contraseña</button>
-          <!-- Botón regresar al dashboard -->
-          <a href="/dashboard" class="btn-regresar">Regresar </a>
-        </div>
-      </form>
-    </div>
-  </main>
-</div>
-
-<!-- Script para desplegar submenús -->
 <script>
-function toggleSubmenu(id) {
-  const submenu = document.getElementById(id);
-  submenu.hidden = !submenu.hidden;
-}
+  window.addEventListener('DOMContentLoaded', () => {
+    const mensaje = document.querySelector('.alerta-exito');
+    if (mensaje) {
+      document.getElementById('form-contrasena').reset();
+    }
 
-// Abrir automáticamente el submenú de Alumnos
-window.addEventListener('DOMContentLoaded', () => {
-  const submenu = document.getElementById('submenu-alumnos');
-  if (submenu) submenu.hidden = false;
-});
+    const alumnoSelect = document.getElementById('alumno');
+    const contrasenaInput = document.getElementById('contrasena');
+    const submitBtn = document.getElementById('submit-btn');
+
+    function validarFormulario() {
+      submitBtn.disabled = !(alumnoSelect.value && contrasenaInput.value);
+    }
+
+    alumnoSelect.addEventListener('change', validarFormulario);
+    contrasenaInput.addEventListener('input', validarFormulario);
+
+    // Inicializa estado del botón
+    validarFormulario();
+  });
 </script>
 {% endblock %}

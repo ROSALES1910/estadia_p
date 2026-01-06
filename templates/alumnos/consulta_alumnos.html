@@ -1,255 +1,181 @@
 {% extends "layout/base.html" %}
 
+{% block titulo %}Consulta de alumnos{% endblock %}
+
+{% block menu %}
+  {% include "layout/menu_general.html" %}
+{% endblock %}
+
 {% block contenido %}
-<style>
-  .busqueda-container {
-    margin-bottom: 1rem;
-  }
-  #resultados {
-    list-style: none;
-    padding: 0;
-    margin: 0.5rem 0;
-    border: 1px solid #ccc;
-    max-height: 200px;
-    overflow-y: auto;
-  }
-  #resultados li {
-    padding: 0.5rem;
-    cursor: pointer;
-    border-bottom: 1px solid #eee;
-  }
-  #resultados li:hover {
-    background-color: #f0f0f0;
-  }
-  .form-actions {
-    margin-top: 1rem;
-    display: flex;
-    gap: 1rem;
-  }
-  .btn-regresar {
-    background-color: #555;
-    color: #fff;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    text-decoration: none;
-  }
-  .btn-regresar:hover {
-    background-color: #333;
-  }
-  .acciones-alumno ul {
-    list-style: none;
-    padding: 0;
-  }
-  .acciones-alumno li {
-    margin: 0.5rem 0;
-  }
-  .acciones-alumno a {
-    text-decoration: none;
-    color: #007bff;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  .acciones-alumno a:hover {
-    color: #0056b3;
-  }
-</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/formularios.css') }}">
 
-<div class="dashboard-wrapper">
-  <!-- Menú lateral institucional completo -->
-  <aside class="sidebar">
-    <ul class="sidebar-menu">
-      <!-- Alumnos -->
-      <li>
-        <a href="#" class="menu-principal" onclick="toggleSubmenu('submenu-alumnos')">Alumnos</a>
-        <ul class="submenu" id="submenu-alumnos" hidden>
-          <li><a href="/alumnos/registrar">Registrar nuevo alumno</a></li>
-          <li><a href="/alumnos/activar">Activar/Inactivar alumno</a></li>
-          <li><a href="/alumnos/modificar">Modificar datos del alumno</a></li>
-          <li><a href="/alumnos/asignar_proyecto">Asignar/Cambiar proyecto al alumno</a></li>
-          <li><a href="/alumnos/desasignar_proyecto">Desasignar proyecto al alumno</a></li>
-          <li><a href="/alumnos/modificar_contrasena">Cambiar contraseña al alumno</a></li>
-          <li><a href="/alumnos/asignar_horario">Asignar/Cambiar horario al alumno</a></li>
-          <li><a href="/alumnos/horario">Horario alumno</a></li>
-          <li><a href="/alumnos/comentarios">Histórico de comentarios del alumno</a></li>
-          <li><a href="/alumnos/log">Log del alumno</a></li>
-          <li><a href="/alumnos/eliminar">Eliminar alumno</a></li>
-          <li><a href="/alumnos/consulta" class="activo">Consulta de alumnos</a></li>
-        </ul>
-      </li>
+<main class="dashboard-main" role="main" aria-label="Área principal - Consulta de alumnos">
+  <div class="dashboard-body" aria-live="polite">
+    <h2>Consulta de alumnos</h2>
 
-      <!-- Instituciones -->
-      <li>
-        <a href="#" class="menu-principal" onclick="toggleSubmenu('submenu-instituciones')">Instituciones</a>
-        <ul class="submenu" id="submenu-instituciones" hidden>
-          <li><a href="/instituciones/registrar">Registrar nueva institución</a></li>
-          <li><a href="/instituciones/modificar">Modificar institución</a></li>
-          <li><a href="/instituciones/eliminar">Eliminar institución</a></li>
-          <li><a href="/instituciones/consulta">Consultar instituciones</a></li>
-        </ul>
-      </li>
-
-      <!-- Proyectos -->
-      <li>
-        <a href="#" class="menu-principal" onclick="toggleSubmenu('submenu-proyectos')">Proyectos</a>
-        <ul class="submenu" id="submenu-proyectos" hidden>
-          <li><a href="/proyectos/registrar">Registrar nuevo proyecto</a></li>
-          <li><a href="/proyectos/modificar">Modificar datos del proyecto</a></li>
-          <li><a href="/proyectos/terminar">Terminar proyecto</a></li>
-          <li><a href="/proyectos/consulta">Consulta de proyectos</a></li>
-        </ul>
-      </li>
-
-      <!-- Asistencia -->
-      <li>
-        <a href="#" class="menu-principal" onclick="toggleSubmenu('submenu-asistencia')">Asistencia</a>
-        <ul class="submenu" id="submenu-asistencia" hidden>
-          <li><a href="/asistencia/consulta">Consultar asistencia del alumno</a></li>
-          <li><a href="/asistencia/incidencias">Incidencias</a></li>
-        </ul>
-      </li>
-
-      <!-- Documentos -->
-      <li>
-        <a href="#" class="menu-principal" onclick="toggleSubmenu('submenu-documentos')">Documentos</a>
-        <ul class="submenu" id="submenu-documentos" hidden>
-          <li><a href="/documentos/aceptacion">Carta de aceptación</a></li>
-          <li><a href="/documentos/terminacion">Carta de terminación</a></li>
-          <li><a href="/documentos/horas">Constancia de horas</a></li>
-        </ul>
-      </li>
-
-      <!-- Perfil -->
-      <li>
-        <a href="#" class="menu-principal" onclick="toggleSubmenu('submenu-perfil')">Perfil</a>
-        <ul class="submenu" id="submenu-perfil" hidden>
-          <li><a href="/perfil/modificar">Modificar perfil</a></li>
-          <li><a href="/dashboard/login.html">Cerrar sesión</a></li>
-        </ul>
-      </li>
-    </ul>
-  </aside>
-
-  <!-- Área principal -->
-  <main class="dashboard-main">
-    <div class="dashboard-body">
-      <h2>Consulta de alumnos</h2>
-
-      <!-- Buscador dinámico -->
-      <div class="busqueda-container">
-        <label for="busqueda">Buscar por nombre:</label>
-        <input type="text" id="busqueda" placeholder="Escribe un nombre...">
-        <ul id="resultados"></ul>
-      </div>
-
-      <!-- Datos del alumno -->
-      <fieldset class="datos-alumno">
-        <legend>Datos del alumno</legend>
-        <label>Nombre:</label>
-        <input type="text" id="nombre" readonly>
-        <label>Apellido paterno:</label>
-        <input type="text" id="apellido_paterno" readonly>
-        <label>Apellido materno:</label>
-        <input type="text" id="apellido_materno" readonly>
-        <label>Teléfono:</label>
-        <input type="text" id="telefono" readonly>
-        <label>Correo:</label>
-        <input type="email" id="email" readonly>
-      </fieldset>
-
-      <div class="form-actions">
-        <button type="button" id="editar">Editar datos</button>
-        <a href="/dashboard" class="btn-regresar">Regresar </a>
-      </div>
-
-      <!-- Acciones disponibles -->
-      <div class="acciones-alumno" id="acciones-alumno" style="display: none;">
-        <h3>Acciones disponibles</h3>
-        <ul>
-          <li><a id="link-modificar" href="#"><span>✏️</span> Modificar datos</a></li>
-          <li><a id="link-proyecto" href="#"><span>📂</span> Asignar/Cambiar proyecto</a></li>
-          <li><a id="link-horario" href="#"><span>📅</span> Asignar/Cambiar horario</a></li>
-          <li><a id="link-comentarios" href="#"><span>💬</span> Ver comentarios</a></li>
-          <li><a id="link-log" href="#"><span>📜</span> Ver log</a></li>
-          <li><a id="link-eliminar" href="#"><span>🗑️</span> Eliminar alumno</a></li>
-        </ul>
-      </div>
+    <!-- Buscador -->
+    <div class="busqueda-container" role="search" aria-label="Buscar alumno">
+      <label for="busqueda">Buscar por nombre:</label>
+      <input
+        type="text"
+        id="busqueda"
+        name="busqueda"
+        class="formulario-input"
+        placeholder="Escribe un nombre (mín. 2 caracteres)..."
+        title="Escribe el nombre del alumno para buscar"
+        autocomplete="off"
+        aria-label="Buscar alumno por nombre">
+      <ul id="resultados" role="listbox" aria-label="Resultados de búsqueda"></ul>
     </div>
-  </main>
-</div>
+
+    <!-- Datos del alumno -->
+    <fieldset class="datos-alumno formulario" aria-labelledby="datos-alumno-legend">
+      <legend id="datos-alumno-legend">Datos del alumno</legend>
+
+      <label for="nombre">Nombre:</label>
+      <input type="text" id="nombre" name="nombre" class="formulario-input" placeholder="Nombre del alumno" readonly aria-readonly="true">
+
+      <label for="apellido_paterno">Apellido paterno:</label>
+      <input type="text" id="apellido_paterno" name="apellido_paterno" class="formulario-input" placeholder="Apellido paterno" readonly aria-readonly="true">
+
+      <label for="apellido_materno">Apellido materno:</label>
+      <input type="text" id="apellido_materno" name="apellido_materno" class="formulario-input" placeholder="Apellido materno" readonly aria-readonly="true">
+
+      <label for="telefono">Teléfono:</label>
+      <input type="text" id="telefono" name="telefono" class="formulario-input" placeholder="Teléfono" readonly aria-readonly="true">
+
+      <label for="email">Correo:</label>
+      <input type="email" id="email" name="email" class="formulario-input" placeholder="Correo electrónico" readonly aria-readonly="true">
+    </fieldset>
+
+    <!-- Acciones -->
+    <div class="form-actions" role="group" aria-label="Acciones del formulario">
+      <button type="button" id="editar" aria-controls="acciones-alumno" class="btn btn-primary">Editar datos</button>
+      <a href="/dashboard" class="btn-regresar">Regresar</a>
+    </div>
+
+    <!-- Acciones disponibles (siempre visibles; deshabilitadas hasta seleccionar alumno) -->
+    <div class="acciones-alumno" id="acciones-alumno" role="region" aria-hidden="true" aria-label="Acciones disponibles del alumno">
+      <h3>Acciones disponibles</h3>
+      <ul>
+        <li><a id="link-modificar" class="accion-link disabled" href="#"><span aria-hidden="true">✏️</span> Modificar datos</a></li>
+        <li><a id="link-proyecto" class="accion-link disabled" href="#"><span aria-hidden="true">📂</span> Asignar/Cambiar proyecto</a></li>
+        <li><a id="link-horario" class="accion-link disabled" href="#"><span aria-hidden="true">📅</span> Asignar/Cambiar horario</a></li>
+        <li><a id="link-comentarios" class="accion-link disabled" href="#"><span aria-hidden="true">💬</span> Ver comentarios</a></li>
+        <li><a id="link-log" class="accion-link disabled" href="#"><span aria-hidden="true">📜</span> Ver log</a></li>
+        <li><a id="link-eliminar" class="accion-link disabled" href="#"><span aria-hidden="true">🗑️</span> Eliminar alumno</a></li>
+      </ul>
+    </div>
+  </div>
+</main>
 
 <script>
-function toggleSubmenu(id) {
-  const submenu = document.getElementById(id);
-  submenu.hidden = !submenu.hidden;
-}
-window.addEventListener('DOMContentLoaded', () => {
-  const submenu = document.getElementById('submenu-alumnos');
-  if (submenu) submenu.hidden = false;
-});
+  function toggleSubmenu(id) {
+    const submenu = document.getElementById(id);
+    if (!submenu) return;
+    submenu.hidden = !submenu.hidden;
+  }
 
-let matriculaSeleccionada = null;
+  window.addEventListener('DOMContentLoaded', () => {
+    const submenu = document.getElementById('submenu-alumnos');
+    if (submenu) submenu.hidden = false;
 
-document.getElementById('busqueda').addEventListener('input', async function () {
-  const nombre = this.value.trim();
-  const resultados = document.getElementById('resultados');
-  resultados.innerHTML = '';
+    // Inicializar estado de enlaces (desactivados)
+    desactivarEnlaces();
+  });
 
-  if (nombre.length < 2) return;
+  let matriculaSeleccionada = null;
 
-  try {
-    const res = await fetch(`/api/alumnos/buscar?nombre=${encodeURIComponent(nombre)}`);
-    const alumnos = await res.json();
+  // Referencias a enlaces de acciones
+  const linkModificar = document.getElementById('link-modificar');
+  const linkProyecto  = document.getElementById('link-proyecto');
+  const linkHorario   = document.getElementById('link-horario');
+  const linkComentarios = document.getElementById('link-comentarios');
+  const linkLog = document.getElementById('link-log');
+  const linkEliminar = document.getElementById('link-eliminar');
 
-    if (alumnos.length === 0) {
-      resultados.innerHTML = '<li>No se encontraron coincidencias</li>';
+  function desactivarEnlaces() {
+    [linkModificar, linkProyecto, linkHorario, linkComentarios, linkLog, linkEliminar].forEach(a => {
+      a.classList.add('disabled');
+      a.setAttribute('aria-disabled', 'true');
+      a.href = '#';
+    });
+    document.getElementById('acciones-alumno').setAttribute('aria-hidden', 'true');
+  }
+
+  function activarEnlaces(matricula) {
+    if (!matricula) return desactivarEnlaces();
+
+    linkModificar.classList.remove('disabled'); linkModificar.removeAttribute('aria-disabled'); linkModificar.href = `/alumnos/modificar?matricula=${encodeURIComponent(matricula)}`;
+    linkProyecto.classList.remove('disabled');  linkProyecto.removeAttribute('aria-disabled');  linkProyecto.href  = `/alumnos/asignar_proyecto?matricula=${encodeURIComponent(matricula)}`;
+    linkHorario.classList.remove('disabled');   linkHorario.removeAttribute('aria-disabled');   linkHorario.href   = `/alumnos/asignar_horario?matricula=${encodeURIComponent(matricula)}`;
+    linkComentarios.classList.remove('disabled'); linkComentarios.removeAttribute('aria-disabled'); linkComentarios.href = `/alumnos/comentarios?matricula=${encodeURIComponent(matricula)}`;
+    linkLog.classList.remove('disabled');        linkLog.removeAttribute('aria-disabled');        linkLog.href        = `/alumnos/log?matricula=${encodeURIComponent(matricula)}`;
+    linkEliminar.classList.remove('disabled');   linkEliminar.removeAttribute('aria-disabled');   linkEliminar.href   = `/alumnos/eliminar?matricula=${encodeURIComponent(matricula)}`;
+
+    document.getElementById('acciones-alumno').setAttribute('aria-hidden', 'false');
+  }
+
+  document.getElementById('busqueda').addEventListener('input', async function () {
+    const nombre = this.value.trim();
+    const resultados = document.getElementById('resultados');
+    resultados.innerHTML = '';
+
+    if (nombre.length < 2) return;
+
+    try {
+      const res = await fetch(`/api/alumnos/buscar?nombre=${encodeURIComponent(nombre)}`);
+      const alumnos = await res.json();
+
+      if (!alumnos || alumnos.length === 0) {
+        resultados.innerHTML = '<li>No se encontraron coincidencias</li>';
+        return;
+      }
+
+      alumnos.forEach(a => {
+        const li = document.createElement('li');
+        li.textContent = `${a.nombre} ${a.apellido_paterno} ${a.apellido_materno} (${a.matricula})`;
+        li.tabIndex = 0;
+        li.addEventListener('click', () => {
+          cargarDatosAlumno(a.matricula);
+        });
+        li.addEventListener('keydown', (e) => { if (e.key === 'Enter') cargarDatosAlumno(a.matricula); });
+        resultados.appendChild(li);
+      });
+    } catch (error) {
+      console.error('Error al buscar alumnos:', error);
+    }
+  });
+
+  async function cargarDatosAlumno(matricula) {
+    matriculaSeleccionada = matricula;
+
+    try {
+      const res = await fetch(`/api/alumnos/datos?matricula=${encodeURIComponent(matricula)}`);
+      const datos = await res.json();
+
+      document.getElementById('nombre').value = datos?.nombre || '';
+      document.getElementById('apellido_paterno').value = datos?.apellido_paterno || '';
+      document.getElementById('apellido_materno').value = datos?.apellido_materno || '';
+      document.getElementById('telefono').value = datos?.telefono || '';
+      document.getElementById('email').value = datos?.e_mail || '';
+
+      // Activar enlaces con la matrícula seleccionada
+      activarEnlaces(matricula);
+    } catch (error) {
+      console.error('Error al cargar datos del alumno:', error);
+      desactivarEnlaces();
+    }
+  }
+
+  document.getElementById('editar').addEventListener('click', function () {
+    if (!matriculaSeleccionada) {
+      alert('Selecciona primero un alumno para habilitar las acciones.');
       return;
     }
-
-    alumnos.forEach(a => {
-      const li = document.createElement('li');
-      li.textContent = `${a.nombre} ${a.apellido_paterno} ${a.apellido_materno} (${a.matricula})`;
-      li.addEventListener('click', () => cargarDatosAlumno(a.matricula));
-      resultados.appendChild(li);
-    });
-  } catch (error) {
-    console.error('Error al buscar alumnos:', error);
-  }
-});
-
-// Cargar datos del alumno seleccionado
-async function cargarDatosAlumno(matricula) {
-  matriculaSeleccionada = matricula;
-  document.getElementById('acciones-alumno').style.display = 'none';
-
-  try {
-    const res = await fetch(`/api/alumnos/datos?matricula=${encodeURIComponent(matricula)}`);
-    const datos = await res.json();
-
-    if (datos) {
-      document.getElementById('nombre').value = datos.nombre || '';
-      document.getElementById('apellido_paterno').value = datos.apellido_paterno || '';
-      document.getElementById('apellido_materno').value = datos.apellido_materno || '';
-      document.getElementById('telefono').value = datos.telefono || '';
-      document.getElementById('email').value = datos.e_mail || '';
-    }
-  } catch (error) {
-    console.error('Error al cargar datos del alumno:', error);
-  }
-}
-
-// Mostrar acciones con enlaces dinámicos
-document.getElementById('editar').addEventListener('click', function () {
-  if (!matriculaSeleccionada) return;
-  document.getElementById('acciones-alumno').style.display = 'block';
-
-  document.getElementById('link-modificar').href = `/alumnos/modificar?matricula=${matriculaSeleccionada}`;
-  document.getElementById('link-proyecto').href = `/alumnos/asignar_proyecto?matricula=${matriculaSeleccionada}`;
-  document.getElementById('link-horario').href = `/alumnos/asignar_horario?matricula=${matriculaSeleccionada}`;
-  document.getElementById('link-comentarios').href = `/alumnos/comentarios?matricula=${matriculaSeleccionada}`;
-  document.getElementById('link-log').href = `/alumnos/log?matricula=${matriculaSeleccionada}`;
-  document.getElementById('link-eliminar').href = `/alumnos/eliminar?matricula=${matriculaSeleccionada}`;
-});
+    // Redirige a la página de modificación
+    window.location.href = `/alumnos/modificar?matricula=${encodeURIComponent(matriculaSeleccionada)}`;
+  });
 </script>
 {% endblock %}

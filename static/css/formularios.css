@@ -1,0 +1,309 @@
+/* ========== FORMULARIOS GENERALES ========== */
+.formulario {
+  width: 100%;
+  background-color: #fff;
+  padding: 32px;
+  border-radius: 8px;
+  box-shadow: 0 0 6px rgba(0,0,0,0.1);
+  box-sizing: border-box;
+}
+
+.formulario fieldset {
+  border: 1px solid #ccc;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 6px;
+}
+
+.formulario legend {
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 12px;
+  color: #333;
+}
+
+.formulario label {
+  display: block;
+  margin-top: 0.8rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.formulario select,
+.formulario input,
+.formulario textarea {
+  width: 100%;
+  padding: 0.4rem;
+  margin-top: 0.2rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+  font-size: 14px;
+  color: #333;
+  box-sizing: border-box;
+  margin-bottom: 1rem;
+}
+
+.formulario textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* ========== VARIANTES DE FORMULARIO ========== */
+.formulario--compact {
+  padding: 20px;
+}
+
+.formulario--wide {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* ========== ACCIONES DEL FORMULARIO ========== */
+.form-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* ========== BOTONES PRINCIPALES (Bootstrap override) ========== */
+button[type="submit"].btn-primary {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 24px;
+  border: none;
+  border-radius: 4px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button[type="submit"].btn-primary:hover {
+  background-color: #0056b3;
+}
+
+/* ========== BOTÓN REGRESAR ========== */
+a.btn-regresar {
+  display: inline-block;
+  margin-left: 1rem;
+  padding: 10px 24px;
+  background-color: #555;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+a.btn-regresar:hover {
+  background-color: #333;
+}
+
+/* ========== ALERTAS ========== */
+.alerta-exito {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 0.8rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.alerta-error {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 0.8rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+/* ===== Compatibilidad de clases para inputs fuera de .formulario ===== */
+.formulario-input,
+.formulario-select,
+.formulario-textarea {
+  width: 100%;
+  padding: 0.4rem;
+  margin-top: 0.2rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+  font-size: 14px;
+  color: #333;
+  box-sizing: border-box;
+  margin-bottom: 1rem;
+}
+
+.formulario-textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* Focus coherente con tus formularios */
+.formulario-input:focus,
+.formulario-select:focus,
+.formulario-textarea:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 6px 14px rgba(0,123,255,0.06);
+  background-color: #fff;
+}
+
+/* Si usas inputs readonly en la vista de consulta */
+.formulario-input[readonly],
+.formulario-input[aria-readonly="true"] {
+  background: #f5f7fb;
+  color: #333;
+  cursor: default;
+}
+
+/* ===== Estilos específicos para Consulta de alumnos ===== */
+.busqueda-container{
+  max-width:900px;
+  margin:0 auto 18px auto;
+  padding:14px;
+  background:#fff;
+  border-radius:10px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.04);
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.busqueda-container label{
+  font-weight:700;
+  color:#222;
+  font-size:0.95rem;
+}
+
+.busqueda-container input[type="text"]{
+  width:100%;
+  padding:10px 12px;
+  border:1px solid #d6d6d6;
+  border-radius:8px;
+  background:#fbfbfb;
+  font-size:0.95rem;
+  box-sizing:border-box;
+  transition:box-shadow .12s ease, border-color .12s ease;
+}
+.busqueda-container input[type="text"]:focus{
+  outline:none;
+  border-color:#007bff;
+  box-shadow:0 8px 20px rgba(0,123,255,0.06);
+  background:#fff;
+}
+
+/* Resultados desplegables */
+#resultados{
+  list-style:none;
+  margin:6px 0 0 0;
+  padding:6px;
+  border:1px solid #e6e6e6;
+  border-radius:8px;
+  max-height:220px;
+  overflow:auto;
+  background:#fff;
+  box-shadow:0 6px 18px rgba(0,0,0,0.03);
+}
+#resultados li{
+  padding:10px 12px;
+  border-bottom:1px solid #f1f1f1;
+  cursor:pointer;
+  color:#222;
+  font-size:0.95rem;
+}
+#resultados li:last-child{ border-bottom:0; }
+#resultados li:hover, #resultados li:focus{
+  background:#007bff;
+  color:#fff;
+  outline:none;
+}
+
+/* Datos del alumno */
+.datos-alumno{
+  max-width:900px;
+  margin:18px auto 12px auto;
+  padding:16px;
+  background:#fff;
+  border-radius:10px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.04);
+  border:1px solid rgba(0,0,0,0.03);
+}
+.datos-alumno legend{ font-weight:800; color:#111; }
+.datos-alumno label{ display:block; margin-top:10px; font-weight:700; color:#333; }
+.datos-alumno input{
+  width:100%;
+  padding:10px;
+  margin-top:6px;
+  border:1px solid #d6d6d6;
+  border-radius:8px;
+  background:#fafafa;
+  box-sizing:border-box;
+  font-size:0.95rem;
+}
+.datos-alumno input[readonly], .datos-alumno input[aria-readonly="true"]{
+  background:#f5f7fb;
+  color:#333;
+  cursor:default;
+}
+
+/* Acciones y botones */
+.form-actions{ 
+  max-width:900px; 
+  margin:12px auto; display:flex; 
+  gap:12px; 
+  justify-content:flex-start; 
+  align-items:center; 
+}
+
+.btn-regresar{ 
+  background:#6b6b6b; 
+  color:#fff; 
+  padding:10px 14px; 
+  border-radius:8px; 
+  text-decoration:none; 
+  font-weight:700; 
+  display:inline-flex; 
+  align-items:center; 
+}
+
+.btn{ 
+  padding:10px 14px; 
+  border-radius:8px; 
+  font-weight:700; 
+  border:none; 
+  cursor:pointer; 
+}
+
+.btn-primary{ background:#007bff; color:#fff; }
+.btn-primary:hover{ background:#0056b3; }
+
+/* Panel de acciones disponibles */
+.acciones-alumno{
+  max-width:900px;
+  margin:18px auto 40px auto;
+  padding:16px;
+  border-radius:10px;
+  background:linear-gradient(180deg,#ffffff,#fbfdff);
+  border:1px solid rgba(0,0,0,0.04);
+  box-shadow:0 6px 18px rgba(0,0,0,0.03);
+}
+.acciones-alumno h3{ margin:0 0 10px 0; font-size:1.05rem; }
+.acciones-alumno ul{ list-style:none; padding:0; margin:0; display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:8px; }
+.acciones-alumno a{
+  display:flex; align-items:center; gap:8px;
+  padding:10px 12px; border-radius:8px; text-decoration:none; color:#0b3b66; background:rgba(0,123,255,0.06); font-weight:700;
+}
+.acciones-alumno a:hover{ background:rgba(0,123,255,0.12); transform:translateY(-2px); }
+
+/* Oculto utilitario */
+.oculto{ display:none !important; }
+
+/* Responsive */
+@media (max-width:720px){
+  .busqueda-container, .datos-alumno, .acciones-alumno, .form-actions{ padding:12px; margin-left:12px; margin-right:12px; }
+  .acciones-alumno ul{ grid-template-columns:1fr; }
+  .form-actions{ flex-direction:column; align-items:stretch; }
+  .btn, .btn-regresar{ width:100%; justify-content:center; }
+}

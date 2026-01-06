@@ -1,205 +1,92 @@
 {% extends "layout/base.html" %}
 
+{% block titulo %}Modificar datos del alumno{% endblock %}
+
+{% block menu %}
+  {% include "layout/menu_general.html" %}
+{% endblock %}
+
 {% block contenido %}
-<style>
-  .btn-regresar {
-    display: inline-block;
-    margin-left: 1rem;
-    padding: 0.5rem 1rem;
-    background-color: #555;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 4px;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-  }
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/formularios.css') }}">
 
-  .btn-regresar:hover {
-    background-color: #333;
-  }
+<main class="dashboard-main">
 
-  .form-actions {
-    margin-top: 1.5rem;
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-  }
+  <div class="dashboard-body">
+    <h2>Modificar datos del alumno</h2>
 
-  .formulario-alumno fieldset {
-    border: 1px solid #ccc;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    border-radius: 6px;
-  }
+    {% if mensaje %}
+      <div class="alerta-exito">{{ mensaje }}</div>
+    {% endif %}
+    {% if error %}
+      <div class="alerta-error">{{ error }}</div>
+    {% endif %}
 
-  .formulario-alumno label {
-    display: block;
-    margin-top: 0.8rem;
-    font-weight: bold;
-  }
+    <form method="post" action="/alumnos/modificar" class="formulario">
+      <fieldset>
+        <legend>Seleccionar alumno</legend>
+        <label for="alumno">Alumno:</label>
+        <select name="alumno" id="alumno" required>
+          <option value="">Selecciona un alumno</option>
+          {% for alumno in alumnos %}
+            <option value="{{ alumno._id }}">{{ alumno.nombre }}</option>
+          {% endfor %}
+        </select>
+      </fieldset>
 
-  .formulario-alumno input,
-  .formulario-alumno select,
-  .formulario-alumno textarea {
-    width: 100%;
-    padding: 0.4rem;
-    margin-top: 0.2rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: #f9f9f9;
-  }
-
-  .form-secciones {
-    display: flex;
-    gap: 2rem;
-    flex-wrap: wrap;
-  }
-
-  .form-secciones fieldset {
-    flex: 1 1 45%;
-    min-width: 300px;
-  }
-
-  .form-full {
-    margin-top: 1rem;
-  }
-
-  .alerta-exito {
-    background-color: #d4edda;
-    color: #155724;
-    padding: 0.8rem;
-    border-radius: 4px;
-    margin-bottom: 1rem;
-  }
-
-  .alerta-error {
-    background-color: #f8d7da;
-    color: #721c24;
-    padding: 0.8rem;
-    border-radius: 4px;
-    margin-bottom: 1rem;
-  }
-</style>
-
-<div class="dashboard-wrapper">
-  <!-- Sidebar institucional -->
-  <aside class="sidebar">
-    <ul class="sidebar-menu">
-      <li>
-        <a href="#" class="menu-principal" onclick="toggleSubmenu('submenu-alumnos')">Alumnos</a>
-        <ul class="submenu" id="submenu-alumnos" hidden>
-          <li><a href="/alumnos/registrar">Registrar nuevo alumno</a></li>
-          <li><a href="/alumnos/activar">Activar/Inactivar alumno</a></li>
-          <li><a href="/alumnos/modificar">Modificar datos del alumno</a></li>
-          <li><a href="/alumnos/asignar_proyecto">Asignar/Cambiar proyecto al alumno</a></li>
-          <li><a href="/alumnos/desasignar_proyecto">Desasignar proyecto al alumno</a></li>
-          <li><a href="/alumnos/modificar_contrasena">Cambiar contraseña al alumno</a></li>
-          <li><a href="/alumnos/asignar_horario">Asignar/Cambiar horario al alumno</a></li>
-          <li><a href="/alumnos/horario">Horario alumno</a></li>
-          <li><a href="/alumnos/comentarios">Histórico de comentarios del alumno</a></li>
-          <li><a href="/alumnos/log">Log del alumno</a></li>
-          <li><a href="/alumnos/eliminar">Eliminar alumno</a></li>
-          <li><a href="/alumnos/consulta">Consulta de alumnos</a></li>
-        </ul>
-      </li>
-    </ul>
-  </aside>
-
-  <!-- Área principal -->
-  <main class="dashboard-main">
-    <div class="dashboard-header">
-      <button class="logout-button">⏻</button>
-    </div>
-
-    <div class="dashboard-body">
-      <h2>Modificar datos del alumno</h2>
-
-      {% if mensaje %}
-        <div class="alerta-exito">{{ mensaje }}</div>
-      {% endif %}
-      {% if error %}
-        <div class="alerta-error">{{ error }}</div>
-      {% endif %}
-
-      <form method="post" action="/alumnos/modificar" class="formulario-alumno">
+      <div class="form-secciones">
         <fieldset>
-          <legend>Seleccionar alumno</legend>
-          <label for="alumno">Alumno:</label>
-          <select name="alumno" id="alumno" required>
-            <option value="">Selecciona un alumno</option>
-            {% for alumno in alumnos %}
-              <option value="{{ alumno._id }}">{{ alumno.nombre }}</option>
-            {% endfor %}
-          </select>
+          <legend>Datos personales</legend>
+          <label for="nombre">Nombre:</label>
+          <input type="text" name="nombre" id="nombre">
+
+          <label for="apellido_paterno">Apellido Paterno:</label>
+          <input type="text" name="apellido_paterno" id="apellido_paterno">
+
+          <label for="apellido_materno">Apellido Materno:</label>
+          <input type="text" name="apellido_materno" id="apellido_materno">
+
+          <label for="telefono">Teléfono:</label>
+          <input type="tel" name="telefono" id="telefono">
+
+          <label for="email">E-mail:</label>
+          <input type="email" name="email" id="email">
         </fieldset>
 
-        <div class="form-secciones">
-          <fieldset>
-            <legend>Datos personales</legend>
-            <label for="nombre">Nombre:</label>
-            <input type="text" name="nombre" id="nombre">
+        <fieldset>
+          <legend>Datos académicos</legend>
+          <label for="matricula">Matrícula:</label>
+          <input type="text" name="matricula" id="matricula">
 
-            <label for="apellido_paterno">Apellido Paterno:</label>
-            <input type="text" name="apellido_paterno" id="apellido_paterno">
+          <label for="escolaridad">Escolaridad:</label>
+          <select name="escolaridad" id="escolaridad">
+            <option value="">Selecciona</option>
+            <option value="Bachillerato">Bachillerato</option>
+            <option value="Licenciatura">Licenciatura</option>
+            <option value="Posgrado">Posgrado</option>
+          </select>
 
-            <label for="apellido_materno">Apellido Materno:</label>
-            <input type="text" name="apellido_materno" id="apellido_materno">
+          <label for="semestre">Semestre:</label>
+          <input type="text" name="semestre" id="semestre">
 
-            <label for="telefono">Teléfono:</label>
-            <input type="tel" name="telefono" id="telefono">
+          <label for="institucion">Institución:</label>
+          <input type="text" name="institucion" id="institucion">
 
-            <label for="email">E-mail:</label>
-            <input type="email" name="email" id="email">
-          </fieldset>
+          <label for="carrera">Carrera:</label>
+          <input type="text" name="carrera" id="carrera">
+        </fieldset>
+      </div>
 
-          <fieldset>
-            <legend>Datos académicos</legend>
-            <label for="matricula">Matrícula:</label>
-            <input type="text" name="matricula" id="matricula">
+      <div class="form-full">
+        <label for="comentarios">Comentarios:</label>
+        <textarea name="comentarios" id="comentarios"></textarea>
+      </div>
 
-            <label for="escolaridad">Escolaridad:</label>
-            <select name="escolaridad" id="escolaridad">
-              <option value="">Selecciona</option>
-              <option value="Bachillerato">Bachillerato</option>
-              <option value="Licenciatura">Licenciatura</option>
-              <option value="Posgrado">Posgrado</option>
-            </select>
-
-            <label for="semestre">Semestre:</label>
-            <input type="text" name="semestre" id="semestre">
-
-            <label for="institucion">Institución:</label>
-            <input type="text" name="institucion" id="institucion">
-
-            <label for="carrera">Carrera:</label>
-            <input type="text" name="carrera" id="carrera">
-          </fieldset>
-        </div>
-
-        <div class="form-full">
-          <label for="comentarios">Comentarios:</label>
-          <textarea name="comentarios" id="comentarios"></textarea>
-        </div>
-
-        <div class="form-actions">
-          <button type="submit">Guardar cambios</button>
-          <!-- Botón regresar al dashboard -->
-          <a href="/dashboard" class="btn-regresar">Regresar </a>
-        </div>
-      </form>
-    </div>
-  </main>
-</div>
-
-<!-- Script para desplegar submenús -->
-<script>
-function toggleSubmenu(id) {
-  const submenu = document.getElementById(id);
-  submenu.hidden = !submenu.hidden;
-}
-window.addEventListener('DOMContentLoaded', () => {
-  const submenu = document.getElementById('submenu-alumnos');
-  if (submenu) submenu.hidden = false;
-});
-</script>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+        <a href="/dashboard" class="btn-regresar">Regresar</a>
+      </div>
+    </form>
+  </div>
+</main>
 {% endblock %}

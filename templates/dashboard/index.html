@@ -1,104 +1,15 @@
 {% extends "layout/base.html" %}
+
 {% block contenido %}
-<div class="dashboard-wrapper">
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <ul class="sidebar-menu">
-      <!-- Alumnos -->
-      <li>
-        <a href="#" class="menu-principal" onclick="toggleSubmenu('submenu-alumnos')">Alumnos</a>
-        <ul class="submenu" id="submenu-alumnos" hidden>
-          <li><a href="/alumnos/registrar">Registrar nuevo alumno</a></li>
-          <li><a href="/alumnos/activar">Activar/Inactivar alumno</a></li>
-          <li><a href="/alumnos/modificar">Modificar datos del alumno</a></li>
-          <li><a href="/alumnos/asignar-proyecto">Asignar/Cambiar proyecto</a></li>
-          <li><a href="/alumnos/desasignar-proyecto">Desasignar proyecto</a></li>
-          <li><a href="/alumnos/modificar-contrasena">Cambiar contraseña</a></li>
-          <li><a href="/alumnos/asignar-horario">Asignar/Cambiar horario</a></li>
-          <li><a href="/alumnos/horario">Horario alumno</a></li>
-          <li><a href="/alumnos/comentarios">Histórico de comentarios</a></li>
-          <li><a href="/alumnos/log">Log del alumno</a></li>
-          <li><a href="/alumnos/eliminar">Eliminar alumno</a></li>
-          <li><a href="/alumnos/consulta">Consulta de alumnos</a></li>
-        </ul>
-      </li>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard-utils.css') }}">
 
-      <!-- Instituciones -->
-      <li>
-        <a href="#" class="menu-principal" onclick="toggleSubmenu('submenu-instituciones')">Instituciones</a>
-        <ul class="submenu" id="submenu-instituciones" hidden>
-          <li><a href="/instituciones/registrar">Registrar nueva institución</a></li>
-          <li><a href="/instituciones/modificar">Modificar institución</a></li>
-          <li><a href="/instituciones/eliminar">Eliminar institución</a></li>
-          <li><a href="/instituciones/consulta">Consultar instituciones</a></li>
-        </ul>
-      </li>
+<!-- Área principal -->
+<main class="dashboard-main">
 
-      <!-- Proyectos -->
-      <li>
-        <a href="#" class="menu-principal" onclick="toggleSubmenu('submenu-proyectos')">Proyectos</a>
-        <ul class="submenu" id="submenu-proyectos" hidden>
-          <li><a href="/proyectos/registrar">Registrar nuevo proyecto</a></li>
-          <li><a href="/proyectos/modificar">Modificar proyecto</a></li>
-          <li><a href="/proyectos/terminar">Terminar proyecto</a></li>
-          <li><a href="/proyectos/consulta">Consulta de proyectos</a></li>
-          {% if rol == 'admin' %}
-            <li><a href="/admin/configuracion">Configuración avanzada</a></li>
-            <li><a href="/admin/usuarios">Gestión de usuarios</a></li>
-          {% endif %}
-        </ul>
-      </li>
-
-      <!-- Asistencia -->
-      <li>
-        <a href="#" class="menu-principal" onclick="toggleSubmenu('submenu-asistencia')">Asistencia</a>
-        <ul class="submenu" id="submenu-asistencia" hidden>
-          <li><a href="/asistencia/consulta">Consultar asistencia</a></li>
-          <li><a href="/asistencia/incidencias">Incidencias</a></li>
-        </ul>
-      </li>
-
-      <!-- Documentos -->
-      <li>
-        <a href="#" class="menu-principal" onclick="toggleSubmenu('submenu-documentos')">Documentos</a>
-        <ul class="submenu" id="submenu-documentos" hidden>
-          <li><a href="/documentos/aceptacion">Carta de aceptación</a></li>
-          <li><a href="/documentos/terminacion">Carta de terminación</a></li>
-          <li><a href="/documentos/horas">Constancia de horas</a></li>
-        </ul>
-      </li>
-
-      <!-- Perfil -->
-      <li>
-        <a href="/perfil" class="menu-principal">Perfil</a>
-        <ul class="submenu" id="submenu-perfil" hidden>
-          <li><a href="/perfil/modificar">Modificar perfil</a></li>
-          <li>
-            <form action="{{ url_for('logout') }}" method="post" style="margin: 0;">
-              <button type="submit" class="menu-link" style="background: none; border: none; padding: 0; color: inherit; cursor: pointer;">
-                Cerrar sesión
-              </button>
-            </form>
-          </li>
-        </ul>
-      </li>
-    </ul>
-  </aside>
-
-  <!-- Área principal -->
-  <main class="dashboard-main">
-
-        <div class="dashboard-body">
-      <h2>Bienvenid@, {{ usuario }}</h2>
-      <p>Selecciona un módulo del menú para comenzar.</p>
-    </div>
-  </main>
-</div>
-
-<script>
-function toggleSubmenu(id) {
-  const submenu = document.getElementById(id);
-  submenu.hidden = !submenu.hidden;
-}
-</script>
+  <div class="dashboard-body">
+    <h2>Bienvenid@, {{ usuario }}</h2>
+    <p>Selecciona un módulo del menú para comenzar.</p>
+  </div>
+</main>
 {% endblock %}

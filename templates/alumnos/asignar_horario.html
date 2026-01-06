@@ -1,0 +1,102 @@
+{% extends "layout/base.html" %}
+
+{% block titulo %}Asignar/Cambiar horario al alumno{% endblock %}
+
+{% block contenido %}
+<!-- Enlaces a tus estilos globales y de formularios -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/formularios.css') }}">
+
+<div class="dashboard-wrapper">
+  <main class="dashboard-main">
+
+    <div class="dashboard-body">
+      <h2>Asignar/Cambiar horario al alumno</h2>
+
+      {% if mensaje %}
+        <div class="alerta-exito">{{ mensaje }}</div>
+      {% endif %}
+      {% if error %}
+        <div class="alerta-error">{{ error }}</div>
+      {% endif %}
+
+      <!-- Selección de alumno -->
+      <form method="GET" action="/alumnos/asignar-horario" class="formulario formulario--compact">
+        <label for="id_alumno">Selecciona un alumno</label>
+        <select id="id_alumno" name="id_alumno" title="Selecciona un alumno" aria-label="Selecciona un alumno" onchange="this.form.submit()">
+          <option value="">-- Selecciona --</option>
+          {% for alumno in alumnos %}
+          <option value="{{ alumno.id_alumno }}" {% if seleccionado and alumno.id_alumno == seleccionado.id_alumno %}selected{% endif %}>
+            {{ alumno.apellido_paterno | trim }} {{ alumno.apellido_materno | trim }} {{ alumno.nombre | trim }}
+          </option>
+          {% endfor %}
+        </select>
+      </form>
+
+      {% if not seleccionado %}
+        <p class="mensaje-inicial">Selecciona un alumno para visualizar y editar su horario.</p>
+      {% endif %}
+
+      {% if seleccionado %}
+      <!-- Formulario de horario -->
+      <form method="POST" action="/alumnos/asignar-horario" class="formulario formulario--wide">
+        <p><strong>Alumno seleccionado:</strong> {{ seleccionado.nombre }} {{ seleccionado.apellido_paterno }} {{ seleccionado.apellido_materno }}</p>
+        <input type="hidden" name="id_alumno" value="{{ seleccionado.id_alumno }}">
+
+        <table class="tabla-horario">
+          <thead>
+            <tr>
+              <th>Día</th>
+              <th>Inicio</th>
+              <th>Fin</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for dia in ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'] %}
+            <tr>
+              <td>{{ dia.capitalize() }}</td>
+              <td>
+                <label for="{{ dia }}_inicio" class="sr-only">Inicio {{ dia.capitalize() }}</label>
+                <input type="time" id="{{ dia }}_inicio" name="{{ dia }}_inicio" value="{{ horario[dia][0] if horario[dia] is defined }}">
+              </td>
+              <td>
+                <label for="{{ dia }}_fin" class="sr-only">Fin {{ dia.capitalize() }}</label>
+                <input type="time" id="{{ dia }}_fin" name="{{ dia }}_fin" value="{{ horario[dia][1] if horario[dia] is defined }}">
+              </td>
+            </tr>
+            {% endfor %}
+            <tr>
+              <td colspan="3">
+                <input type="checkbox" id="sin_horario" name="sin_horario" {% if seleccionado.sin_horario %}checked{% endif %}>
+                <label for="sin_horario">No asignar horario</label>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Guardar horario</button>
+        </div>
+      </form>
+
+      <!-- Botones de navegación -->
+      <div class="form-actions">
+        <button type="button" class="btn-regresar" onclick="window.history.back()">Regresar</button>
+        <a href="/dashboard" class="btn-regresar">Ir al dashboard</a>
+      </div>
+      {% endif %}
+    </div>
+  </main>
+</div>
+
+<script>
+function toggleSubmenu(id) {
+  const submenu = document.getElementById(id);
+  submenu.hidden = !submenu.hidden;
+}
+window.addEventListener('DOMContentLoaded', () => {
+  const submenu = document.getElementById('submenu-alumnos');
+  if (submenu) submenu.hidden = false;
+});
+</script>
+{% endblock %}
