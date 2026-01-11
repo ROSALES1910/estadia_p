@@ -3,7 +3,6 @@
 {% block titulo %}Asignar/Cambiar horario al alumno{% endblock %}
 
 {% block contenido %}
-<!-- Enlaces a tus estilos globales y de formularios -->
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/formularios.css') }}">
 
@@ -21,10 +20,10 @@
       {% endif %}
 
       <!-- Selección de alumno -->
-      <form method="GET" action="/alumnos/asignar-horario" class="formulario formulario--compact">
+      <form method="GET" action="/alumnos/asignar_horario" class="formulario formulario--compact">
         <label for="id_alumno">Selecciona un alumno</label>
 
-        <select id="id_alumno" name="id_alumno" title="Selecciona un alumno" aria-label="Selecciona un alumno" onchange="this.form.submit()">
+        <select id="id_alumno" name="id_alumno" onchange="this.form.submit()">
           <option value="">-- Selecciona --</option>
 
           {% for alumno in alumnos %}
@@ -45,7 +44,8 @@
 
       {% if seleccionado %}
       <!-- Formulario de horario -->
-      <form method="POST" action="/alumnos/asignar-horario" class="formulario formulario--wide">
+      <form method="POST" action="/alumnos/asignar_horario" class="formulario formulario--wide">
+
         <p><strong>Alumno seleccionado:</strong> {{ seleccionado.nombre }} {{ seleccionado.apellido_paterno }} {{ seleccionado.apellido_materno }}</p>
 
         <input type="hidden" name="id_alumno" value="{{ seleccionado.id_alumno }}">
@@ -63,15 +63,17 @@
             {% for dia in ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'] %}
             <tr>
               <td>{{ dia.capitalize() }}</td>
+
               <td>
                 <label for="{{ dia }}_inicio" class="sr-only">Inicio {{ dia.capitalize() }}</label>
                 <input type="time" id="{{ dia }}_inicio" name="{{ dia }}_inicio"
-                       value="{{ horario[dia][0] if horario[dia] is defined }}">
+                       value="{{ horario.get(dia, ['', ''])[0] }}">
               </td>
+
               <td>
                 <label for="{{ dia }}_fin" class="sr-only">Fin {{ dia.capitalize() }}</label>
                 <input type="time" id="{{ dia }}_fin" name="{{ dia }}_fin"
-                       value="{{ horario[dia][1] if horario[dia] is defined }}">
+                       value="{{ horario.get(dia, ['', ''])[1] }}">
               </td>
             </tr>
             {% endfor %}
