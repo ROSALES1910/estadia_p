@@ -7,7 +7,6 @@
 {% endblock %}
 
 {% block contenido %}
-<!-- Enlaces a tus estilos globales y de formularios -->
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/formularios.css') }}">
 
@@ -23,20 +22,37 @@
       <div class="alerta-error">{{ error }}</div>
     {% endif %}
 
-    <form method="POST" action="/alumnos/comentarios" class="formulario">
+    <!-- SELECCIÓN DE ALUMNO -->
+    <form method="GET" action="/alumnos/comentarios" class="formulario formulario--compact">
       <fieldset>
         <legend>Seleccionar alumno</legend>
-        <label for="alumno">Alumno:</label>
-        <select name="alumno" id="alumno" required>
+
+        <label for="id_alumno">Alumno:</label>
+        <select name="id_alumno" id="id_alumno" required onchange="this.form.submit()">
           <option value="">Seleccione el alumno...</option>
+
           {% for alumno in alumnos %}
-            <option value="{{ alumno.matricula }}">{{ alumno.nombre }}</option>
+            <option value="{{ alumno.id_alumno }}"
+              {% if seleccionado and alumno.id_alumno == seleccionado.id_alumno %}
+                selected
+              {% endif %}
+            >
+              {{ alumno.nombre }} {{ alumno.apellido_paterno }} {{ alumno.apellido_materno }}
+            </option>
           {% endfor %}
         </select>
       </fieldset>
+    </form>
+
+    {% if seleccionado %}
+
+    <!-- AGREGAR COMENTARIO -->
+    <form method="POST" action="/alumnos/comentarios" class="formulario">
+      <input type="hidden" name="id_alumno" value="{{ seleccionado.id_alumno }}">
 
       <fieldset>
         <legend>Comentario</legend>
+
         <label for="comentario">Escribe el comentario:</label>
         <textarea name="comentario" id="comentario" rows="4" required></textarea>
       </fieldset>
@@ -46,6 +62,25 @@
         <a href="/dashboard" class="btn-regresar">Regresar</a>
       </div>
     </form>
+
+    <!-- HISTORIAL DE COMENTARIOS -->
+    <h3>Historial de comentarios</h3>
+
+    {% if comentarios %}
+      <div class="lista-comentarios">
+        {% for c in comentarios %}
+          <div class="comentario-item">
+            <strong>{{ c.fecha }}</strong><br>
+            {{ c.comentario }}
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>No hay comentarios registrados.</p>
+    {% endif %}
+
+    {% endif %}
+
   </div>
 </main>
 {% endblock %}

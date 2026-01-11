@@ -6,9 +6,10 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
-/* ========== HEADER SUPERIOR AZUL CLARO ========== */
+/* ========== HEADER SUPERIOR ========== */
 .header-top {
   width: 100%;
   background-color: #b5ddff;
@@ -20,12 +21,11 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  height: 120px; /* igual que el logo */
+  height: 120px;
   z-index: 20;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
-/* Logo */
 .logo-header {
   position: relative;
   z-index: 20;
@@ -37,7 +37,7 @@ body {
   filter: drop-shadow(0 0 2px rgba(0,0,0,0.2));
 }
 
-/* ========== LOGOUT EN ESQUINA SUPERIOR DERECHA ========== */
+/* ========== LOGOUT ========== */
 .logout-form {
   position: relative;
   z-index: 50;
@@ -63,28 +63,15 @@ body {
   background-color: #cc0000;
 }
 
-/* ========== CORRECCIÓN LISTAS SOLO PARA CONTENIDO (NO MENU) ========== */
-.dashboard-body ul,
-.dashboard-body ol {
-  margin: 0 0 1rem 1.4rem;
-  padding: 0;
-}
-
-.dashboard-body li {
-  margin-bottom: 4px;
-  list-style: disc;
-  font-size: 15px;
-  line-height: 1.4;
-  color: #333;
-}
-
 /* ========== LOGIN ========== */
 main.login-main {
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-top: 40px;
+  min-height: calc(100vh - 120px);
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 .login-box {
@@ -95,10 +82,10 @@ main.login-main {
   width: 360px;
   box-shadow: 0 0 10px rgba(0,0,0,0.5);
   color: white;
+  text-align: center;
 }
 
 .login-title {
-  text-align: center;
   font-size: 26px;
   margin-bottom: 25px;
   color: #ffffff;
@@ -141,7 +128,7 @@ main.login-main {
 .login-error {
   color: #ff4d4d;
   text-align: center;
-  margin-top: 12px;
+  margin-bottom: 15px;
   font-size: 14px;
 }
 
@@ -150,9 +137,10 @@ main.login-main {
   display: flex;
   width: 100%;
   position: relative;
-  min-height: 100vh;
+  min-height: calc(100vh - 120px);
   box-sizing: border-box;
-  margin-top: 120px; /* evita que invada el header */
+  margin-top: 120px; /* ← este es el que sube el formulario */
+  align-items: stretch; /* ← para que el menú llegue al fondo */
 }
 
 .sidebar {
@@ -161,11 +149,11 @@ main.login-main {
   color: white;
   padding: 16px;
   box-sizing: border-box;
-  min-height: calc(100vh - 120px);
-  box-shadow: 2px 0 6px rgba(0,0,0,0.15);
+  height: auto;
+  min-height: 100%;
+  align-self: stretch; /* ← esto fuerza que se estire como el contenido */
 }
 
-/* MENU SIN BULLETS */
 .sidebar-menu {
   list-style: none !important;
   padding: 0;
@@ -219,17 +207,25 @@ main.login-main {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  align-items: center;
-  padding: 40px 0;
+  align-items: stretch;
+  padding: 0;
+  margin: 0;
   box-sizing: border-box;
-  overflow-y: auto;
+  overflow-y: auto; /* scroll si el contenido crece */
+  min-height: calc(100vh - 120px); /* compensa el header fijo */
+  max-width: none; /* evita restricciones heredadas */
 }
 
 .dashboard-body {
+  flex: 1;
+  display: block;
   width: 100%;
-  max-width: 1000px;
-  padding: 0 32px;
+  max-width: 1100px;
+  padding: 140px 32px 32px 32px; /* ← esto sube el formulario */
+  margin: 0 auto;
   box-sizing: border-box;
+  position: relative;
+  overflow: visible;
 }
 
 .dashboard-body h2 {
@@ -293,3 +289,22 @@ button[type="submit"].btn-primary:hover {
   border-radius: 4px;
   margin-bottom: 1rem;
 }
+
+/* ========== FOOTER ========== */
+footer {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 10px 20px;
+  text-align: center;
+  color: #333;
+  background-color: transparent;
+  overflow-x: hidden;
+  margin-top: auto;
+}
+
+footer p {
+  margin: 0;
+  font-size: 14px;
+}
+

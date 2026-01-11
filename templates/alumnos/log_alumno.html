@@ -21,72 +21,84 @@
       <div class="alerta-error">{{ error }}</div>
     {% endif %}
 
-    <form method="POST" action="/alumnos/log" class="formulario">
+    <!-- SELECCIÓN DE ALUMNO -->
+    <form method="GET" action="/alumnos/log" class="formulario formulario--compact">
       <fieldset>
         <legend>Buscar alumno</legend>
-        <label for="alumno">Selecciona un alumno:</label>
-        <select name="alumno" id="alumno" required>
+
+        <label for="id_alumno">Selecciona un alumno:</label>
+        <select name="id_alumno" id="id_alumno" required onchange="this.form.submit()">
           <option value="">-- Selecciona --</option>
+
           {% for alumno in alumnos %}
-            <option value="{{ alumno.matricula }}">{{ alumno.nombre }}</option>
+            <option value="{{ alumno.id_alumno }}"
+              {% if seleccionado and alumno.id_alumno == seleccionado.id_alumno %}
+                selected
+              {% endif %}
+            >
+              {{ alumno.nombre }} {{ alumno.apellido_paterno }} {{ alumno.apellido_materno }}
+            </option>
           {% endfor %}
         </select>
       </fieldset>
-
-      <div class="form-actions">
-        <button type="submit" class="btn btn-primary">Generar log</button>
-        <a href="/dashboard" class="btn-regresar">Regresar</a>
-      </div>
     </form>
 
-    {% if resumen.datos %}
+    {% if seleccionado %}
+
       <hr>
       <h3>Resumen del alumno</h3>
-      <p><strong>Nombre:</strong> {{ resumen.datos.nombre }} {{ resumen.datos.apellido_paterno }} {{ resumen.datos.apellido_materno }}</p>
-      <p><strong>Matrícula:</strong> {{ resumen.datos.matricula }}</p>
-      <p><strong>Correo:</strong> {{ resumen.datos.correo }}</p>
-      <p><strong>Teléfono:</strong> {{ resumen.datos.telefono }}</p>
-      <p><strong>Estado:</strong> {{ resumen.datos.estado }}</p>
-      <p><strong>Activo:</strong> {{ resumen.datos.activo }}</p>
-      <p><strong>Fecha de registro:</strong> {{ resumen.datos.fecha_registro }}</p>
 
-      {% if resumen.proyecto %}
-        <p><strong>Proyecto asignado:</strong> {{ resumen.proyecto }}</p>
-      {% endif %}
-      {% if resumen.institucion %}
-        <p><strong>Institución:</strong> {{ resumen.institucion }}</p>
+      <p><strong>Nombre:</strong> {{ seleccionado.nombre }} {{ seleccionado.apellido_paterno }} {{ seleccionado.apellido_materno }}</p>
+      <p><strong>Matrícula:</strong> {{ seleccionado.matricula }}</p>
+      <p><strong>Correo:</strong> {{ seleccionado.correo }}</p>
+      <p><strong>Teléfono:</strong> {{ seleccionado.telefono }}</p>
+      <p><strong>Estado:</strong> {{ seleccionado.estado }}</p>
+      <p><strong>Activo:</strong> {{ seleccionado.activo }}</p>
+      <p><strong>Fecha de registro:</strong> {{ seleccionado.fecha_registro }}</p>
+
+      {% if seleccionado.proyecto %}
+        <p><strong>Proyecto asignado:</strong> {{ seleccionado.proyecto }}</p>
       {% endif %}
 
-      {% if resumen.horario %}
+      {% if seleccionado.institucion %}
+        <p><strong>Institución:</strong> {{ seleccionado.institucion }}</p>
+      {% endif %}
+
+      {% if seleccionado.horario %}
         <h4>Horario</h4>
-        <ul>
-          {% for dia, horas in resumen.horario.items() %}
-          <li>{{ dia|capitalize }}: {{ horas[0] or '' }}{% if horas[0] and horas[1] %} - {{ horas[1] }}{% elif horas[1] %}{{ horas[1] }}{% endif %}</li>
+        <div class="lista-horario">
+          {% for dia, horas in seleccionado.horario.items() %}
+            <div class="horario-item">
+              <strong>{{ dia|capitalize }}:</strong>
+              {{ horas[0] or '' }}
+              {% if horas[0] and horas[1] %} - {{ horas[1] }}{% elif horas[1] %}{{ horas[1] }}{% endif %}
+            </div>
           {% endfor %}
-        </ul>
+        </div>
       {% endif %}
 
-      {% if resumen.comentarios %}
+      {% if seleccionado.comentarios_historial %}
         <h4>Comentarios</h4>
-        <ul>
-          {% for c in resumen.comentarios %}
-          <li>
-            {%- set fecha = c.fecha if c.fecha is defined else None -%}
-            {%- if fecha -%}
-            {{ fecha.strftime('%d/%m/%Y') }}
-            {%- else -%}
-            sin fecha
-            {%- endif -%}
-             — {{ c.usuario|default('usuario') }}: {{ c.comentario }}
-          </li>
+        <div class="lista-comentarios">
+          {% for c in seleccionado.comentarios_historial %}
+            <div class="comentario-item">
+              {% if c.fecha %}
+                {{ c.fecha }}
+              {% else %}
+                sin fecha
+              {% endif %}
+              — {{ c.usuario|default('usuario') }}: {{ c.comentario }}
+            </div>
           {% endfor %}
-        </ul>
+        </div>
       {% endif %}
+
     {% endif %}
 
     {% if registros %}
       <hr>
       <h3>Historial de acciones</h3>
+
       <table class="tabla-resultados">
         <thead>
           <tr>
@@ -99,7 +111,11 @@
           {% for r in registros %}
             <tr>
               <td>
-                {%- if r.fecha %}{{ r.fecha.strftime('%d/%m/%Y %H:%M') }}{% else %}sin fecha{% endif -%}
+                {% if r.fecha %}
+                  {{ r.fecha }}
+                {% else %}
+                  sin fecha
+                {% endif %}
               </td>
               <td>{{ r.accion }}</td>
               <td>{{ r.usuario }}</td>
@@ -108,6 +124,11 @@
         </tbody>
       </table>
     {% endif %}
+
+    <div class="form-actions">
+      <a href="/dashboard" class="btn-regresar">Regresar</a>
+    </div>
+
   </div>
 </main>
 {% endblock %}

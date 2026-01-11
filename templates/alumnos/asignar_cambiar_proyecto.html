@@ -19,29 +19,43 @@
       <div class="alerta-error">{{ error }}</div>
     {% endif %}
 
-    <form method="post" action="/alumnos/asignar_proyecto" class="formulario formulario--wide">
+    <form method="post" action="/alumnos/asignar-proyecto" class="formulario formulario--wide">
       <div class="form-secciones">
+
+        <!-- SELECCIÓN DE ALUMNO -->
         <fieldset>
           <legend>Seleccionar alumno</legend>
           <label for="alumno">Alumno:</label>
+
           <select name="alumno" id="alumno" required>
             <option value="">Seleccione un alumno</option>
+
             {% for alumno in alumnos %}
-              <option value="{{ alumno.matricula }}">{{ alumno.nombre }}</option>
+              <option value="{{ alumno.matricula }}"
+                {% if alumno_seleccionado and alumno.matricula == alumno_seleccionado.matricula %}
+                  selected
+                {% endif %}
+              >
+                {{ alumno.nombre }} ({{ alumno.matricula }})
+              </option>
             {% endfor %}
           </select>
         </fieldset>
 
+        <!-- DATOS DEL PROYECTO -->
         <fieldset>
           <legend>Datos del proyecto</legend>
+
           <label for="proyecto">Nombre del proyecto:</label>
           <select name="proyecto" id="proyecto" required>
             <option value="">Seleccione un proyecto</option>
+
             {% for proyecto in proyectos %}
               <option value="{{ proyecto.nombre }}">{{ proyecto.nombre }}</option>
             {% endfor %}
           </select>
         </fieldset>
+
       </div>
 
       <div class="form-full">
@@ -53,6 +67,7 @@
         <button type="submit" class="btn btn-primary">Asignar proyecto</button>
         <a href="/dashboard" class="btn-regresar">Regresar</a>
       </div>
+
     </form>
   </div>
 </main>

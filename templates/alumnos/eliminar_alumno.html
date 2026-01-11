@@ -1,0 +1,95 @@
+{% extends "layout/base.html" %}
+
+{% block titulo %}Eliminar alumno{% endblock %}
+
+{% block menu %}
+  {% include "layout/menu_general.html" %}
+{% endblock %}
+
+{% block contenido %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/formularios.css') }}">
+
+<main class="dashboard-main">
+  <div class="dashboard-body">
+    <h2>Eliminar alumno</h2>
+
+    {% if mensaje %}
+      <div class="alerta-exito">{{ mensaje }}</div>
+    {% endif %}
+    {% if error %}
+      <div class="alerta-error">{{ error }}</div>
+    {% endif %}
+
+    <!-- SELECCIÓN DE ALUMNO -->
+    <form method="GET" action="/alumnos/eliminar" class="formulario formulario--compact">
+      <fieldset>
+        <legend>Seleccionar alumno</legend>
+
+        <label for="id_alumno">Alumno:</label>
+        <select name="id_alumno" id="id_alumno" required onchange="this.form.submit()">
+          <option value="">Seleccione un alumno...</option>
+
+          {% for alumno in alumnos %}
+            <option value="{{ alumno.id_alumno }}"
+              {% if seleccionado and alumno.id_alumno == seleccionado.id_alumno %}
+                selected
+              {% endif %}
+            >
+              {{ alumno.nombre }} {{ alumno.apellido_paterno }} {{ alumno.apellido_materno }}
+            </option>
+          {% endfor %}
+        </select>
+      </fieldset>
+    </form>
+
+    {% if seleccionado %}
+      <hr>
+      <h3>Datos del alumno</h3>
+
+      <p><strong>Nombre:</strong> {{ seleccionado.nombre }} {{ seleccionado.apellido_paterno }} {{ seleccionado.apellido_materno }}</p>
+      <p><strong>Matrícula:</strong> {{ seleccionado.matricula }}</p>
+      <p><strong>Correo:</strong> {{ seleccionado.correo }}</p>
+      <p><strong>Teléfono:</strong> {{ seleccionado.telefono }}</p>
+      <p><strong>Estado:</strong> {{ seleccionado.estado }}</p>
+      <p><strong>Activo:</strong> {{ seleccionado.activo }}</p>
+
+      <!-- FORMULARIO POST PARA ELIMINAR -->
+      <form method="POST" action="/alumnos/eliminar" id="form-eliminar" class="formulario formulario--danger">
+        <input type="hidden" name="id_alumno" value="{{ seleccionado.id_alumno }}">
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-danger" onclick="mostrarModal()">Eliminar alumno</button>
+          <a href="/dashboard" class="btn-regresar">Cancelar</a>
+        </div>
+      </form>
+
+      <!-- MODAL DE CONFIRMACIÓN SIN CONTENEDOR -->
+      <div id="modal-confirmacion" class="modal" hidden>
+        <div class="modal-actions">
+          <button type="submit" form="form-eliminar" class="btn btn-danger">Eliminar alumno</button>
+          <button type="button" class="btn btn-secundario" onclick="cerrarModal()">Cancelar</button>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</main>
+
+<script>
+function toggleSubmenu(id) {
+  const submenu = document.getElementById(id);
+  submenu.hidden = !submenu.hidden;
+}
+window.addEventListener('DOMContentLoaded', () => {
+  const submenu = document.getElementById('submenu-alumnos');
+  if (submenu) submenu.hidden = false;
+});
+
+function mostrarModal() {
+  document.getElementById('modal-confirmacion').hidden = false;
+}
+function cerrarModal() {
+  document.getElementById('modal-confirmacion').hidden = true;
+}
+</script>
+{% endblock %}

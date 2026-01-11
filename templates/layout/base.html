@@ -4,47 +4,93 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block titulo %}PORTAL SERVICIO SOCIAL{% endblock %}</title>
+
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   <script defer src="{{ url_for('static', filename='js/menu.js') }}"></script>
-</head>
-<body>
 
-  <!-- HEADER CON LOGO Y BOTÓN -->
+  <!-- Bootstrap + Icons (si los estás usando en las vistas) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+</head>
+<body class="body-portal">
+
+  <!-- HEADER -->
   <div class="header-top">
     <div class="logo-header">
       <img src="{{ url_for('static', filename='img/logo_gomezmorin.png') }}"
            alt="PORTAL SERVICIO SOCIAL"
            class="logo-img">
     </div>
+
+    {% if mostrar_menu is not defined or mostrar_menu %}
     <form class="logout-form" method="POST" action="{{ url_for('logout') }}">
-      <button class="logout-button" title="Cerrar sesión">⏻</button>
+      <button type="submit" class="logout-button" title="Cerrar sesión">⏻</button>
     </form>
+    {% endif %}
   </div>
 
-  <div class="dashboard-wrapper">
-    {% block sidebar %}
-      {% include "layout/menu_general.html" %}
-    {% endblock %}
+  <!-- CONTENIDO GENERAL -->
+  {% if mostrar_menu is not defined or mostrar_menu %}
 
-    {% block contenido %}{% endblock %}
-  </div>
+    <!-- DASHBOARD -->
+    <div class="dashboard-wrapper dashboard-wrapper-full">
 
+      {% block sidebar %}
+        {% include "layout/menu_general.html" %}
+      {% endblock %}
+
+      <div class="dashboard-main dashboard-main-full">
+        {% block contenido %}{% endblock %}
+      </div>
+
+    </div>
+
+  {% else %}
+
+    <!-- LOGIN U OTRAS VISTAS SIN MENÚ -->
+    <main class="login-main">
+      {{ login_contenido|safe }}
+    </main>
+
+  {% endif %}
+
+  {% if mostrar_menu is not defined or mostrar_menu %}
   <footer>
     <p>&copy; CECEQ Gómez Morin</p>
   </footer>
+  {% endif %}
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
     function toggleSubmenu(id) {
+      document.querySelectorAll('.submenu').forEach(sub => sub.hidden = true);
       const submenu = document.getElementById(id);
-      submenu.hidden = !submenu.hidden;
+      submenu.hidden = false;
     }
-    window.addEventListener('DOMContentLoaded', () => {
-      const submenu = document.getElementById('submenu-alumnos');
-      if (submenu) submenu.hidden = false;
 
-      const count = document.querySelectorAll('#sidebar').length;
-      console.log('Sidebars en DOM:', count);
+    window.addEventListener('DOMContentLoaded', () => {
+      const path = window.location.pathname;
+
+      const mapping = {
+        'alumnos': 'submenu-alumnos',
+        'instituciones': 'submenu-instituciones',
+        'proyectos': 'submenu-proyectos',
+        'asistencia': 'submenu-asistencia',
+        'documentos': 'submenu-documentos',
+        'perfil': 'submenu-perfil'
+      };
+
+      document.querySelectorAll('.submenu').forEach(sub => sub.hidden = true);
+
+      for (const key in mapping) {
+        if (path.includes(`/${key}/`)) {
+          document.getElementById(mapping[key]).hidden = false;
+          break;
+        }
+      }
     });
   </script>
+
 </body>
 </html>

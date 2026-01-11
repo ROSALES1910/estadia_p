@@ -11,82 +11,215 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/formularios.css') }}">
 
 <main class="dashboard-main">
-
   <div class="dashboard-body">
-    <h2>Modificar datos del alumno</h2>
+
+    <h2 class="titulo-alineado">Modificar datos del alumno</h2>
+
+    <!-- ALERTA CUANDO NO HAY CAMBIOS -->
+    <div id="alertaNoCambios" class="alerta-error alerta-bootstrap oculto">
+      No se modificó ningún campo. Realiza al menos un cambio antes de guardar.
+    </div>
 
     {% if mensaje %}
-      <div class="alerta-exito">{{ mensaje }}</div>
+      <div class="alerta-exito alerta-bootstrap">{{ mensaje }}</div>
     {% endif %}
     {% if error %}
-      <div class="alerta-error">{{ error }}</div>
+      <div class="alerta-error alerta-bootstrap">{{ error }}</div>
     {% endif %}
 
-    <form method="post" action="/alumnos/modificar" class="formulario">
+    <!-- FORMULARIO -->
+    <form method="post" action="/alumnos/modificar" class="formulario" id="formModificar">
+
+      <!-- SELECCIÓN DE ALUMNO -->
       <fieldset>
         <legend>Seleccionar alumno</legend>
+
         <label for="alumno">Alumno:</label>
-        <select name="alumno" id="alumno" required>
+        <select name="alumno" id="alumno" required onchange="this.form.submit()">
           <option value="">Selecciona un alumno</option>
+
           {% for alumno in alumnos %}
-            <option value="{{ alumno._id }}">{{ alumno.nombre }}</option>
+            <option value="{{ alumno._id }}"
+              {% if alumno_seleccionado and alumno.matricula == alumno_seleccionado.matricula %}
+                selected
+              {% endif %}
+            >
+              {{ alumno.nombre }} ({{ alumno.matricula }})
+            </option>
           {% endfor %}
         </select>
       </fieldset>
 
+      {% if alumno_seleccionado %}
       <div class="form-secciones">
+
+        <!-- DATOS PERSONALES -->
         <fieldset>
           <legend>Datos personales</legend>
+
           <label for="nombre">Nombre:</label>
-          <input type="text" name="nombre" id="nombre">
+          <input type="text" name="nombre" id="nombre"
+                 value="{{ alumno_seleccionado.nombre }}">
 
-          <label for="apellido_paterno">Apellido Paterno:</label>
-          <input type="text" name="apellido_paterno" id="apellido_paterno">
+          <label for="apellido_paterno">Apellido paterno:</label>
+          <input type="text" name="apellido_paterno" id="apellido_paterno"
+                 value="{{ alumno_seleccionado.apellido_paterno }}">
 
-          <label for="apellido_materno">Apellido Materno:</label>
-          <input type="text" name="apellido_materno" id="apellido_materno">
+          <label for="apellido_materno">Apellido materno:</label>
+          <input type="text" name="apellido_materno" id="apellido_materno"
+                 value="{{ alumno_seleccionado.apellido_materno }}">
 
           <label for="telefono">Teléfono:</label>
-          <input type="tel" name="telefono" id="telefono">
+          <input type="tel" name="telefono" id="telefono"
+                 value="{{ alumno_seleccionado.telefono }}">
 
           <label for="email">E-mail:</label>
-          <input type="email" name="email" id="email">
+          <input type="email" name="email" id="email"
+                 value="{{ alumno_seleccionado.email }}">
         </fieldset>
 
+        <!-- DATOS ACADÉMICOS -->
         <fieldset>
           <legend>Datos académicos</legend>
+
           <label for="matricula">Matrícula:</label>
-          <input type="text" name="matricula" id="matricula">
+          <input type="text" name="matricula" id="matricula"
+                 value="{{ alumno_seleccionado.matricula }}">
 
           <label for="escolaridad">Escolaridad:</label>
           <select name="escolaridad" id="escolaridad">
             <option value="">Selecciona</option>
-            <option value="Bachillerato">Bachillerato</option>
-            <option value="Licenciatura">Licenciatura</option>
-            <option value="Posgrado">Posgrado</option>
+            <option value="Bachillerato"
+              {% if alumno_seleccionado.escolaridad == "Bachillerato" %}selected{% endif %}>
+              Bachillerato
+            </option>
+            <option value="Licenciatura"
+              {% if alumno_seleccionado.escolaridad == "Licenciatura" %}selected{% endif %}>
+              Licenciatura
+            </option>
+            <option value="Posgrado"
+              {% if alumno_seleccionado.escolaridad == "Posgrado" %}selected{% endif %}>
+              Posgrado
+            </option>
           </select>
 
           <label for="semestre">Semestre:</label>
-          <input type="text" name="semestre" id="semestre">
+          <input type="text" name="semestre" id="semestre"
+                 value="{{ alumno_seleccionado.semestre }}">
 
           <label for="institucion">Institución:</label>
-          <input type="text" name="institucion" id="institucion">
+          <input type="text" name="institucion" id="institucion"
+                 value="{{ alumno_seleccionado.institucion }}">
 
           <label for="carrera">Carrera:</label>
-          <input type="text" name="carrera" id="carrera">
+          <input type="text" name="carrera" id="carrera"
+                 value="{{ alumno_seleccionado.carrera }}">
         </fieldset>
+
       </div>
 
+      <!-- COMENTARIOS -->
       <div class="form-full">
         <label for="comentarios">Comentarios:</label>
-        <textarea name="comentarios" id="comentarios"></textarea>
+        <textarea name="comentarios" id="comentarios">{{ alumno_seleccionado.comentarios }}</textarea>
       </div>
 
+      <!-- BOTONES -->
       <div class="form-actions">
-        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+        <button type="button" class="btn btn-primary" onclick="confirmarCambios()">Guardar cambios</button>
         <a href="/dashboard" class="btn-regresar">Regresar</a>
       </div>
+
+      {% endif %}
+
     </form>
   </div>
 </main>
+
+<!-- MODAL DE CONFIRMACIÓN -->
+<div id="modalConfirmacion" class="modal oculto">
+  <div class="modal-contenido">
+    <h3>¿Seguro que quieres modificar los datos?</h3>
+
+    <p>Estos son los cambios que se aplicarán:</p>
+    <ul id="listaCambios"></ul>
+
+    <div class="modal-botones">
+      <button onclick="enviarFormulario()" class="btn btn-primary">Sí, modificar</button>
+      <button onclick="cerrarModal()" class="btn-regresar">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- SCRIPT -->
+<script>
+const camposMapa = {
+  nombre: "Nombre",
+  apellido_paterno: "Apellido paterno",
+  apellido_materno: "Apellido materno",
+  telefono: "Teléfono",
+  email: "E-mail",
+  matricula: "Matrícula",
+  escolaridad: "Escolaridad",
+  semestre: "Semestre",
+  institucion: "Institución",
+  carrera: "Carrera",
+  comentarios: "Comentarios"
+};
+
+let valoresIniciales = {};
+
+document.addEventListener("DOMContentLoaded", () => {
+  for (const id in camposMapa) {
+    const el = document.getElementById(id);
+    if (el) valoresIniciales[id] = el.value || "";
+  }
+});
+
+function confirmarCambios() {
+  const lista = document.getElementById("listaCambios");
+  const alerta = document.getElementById("alertaNoCambios");
+
+  lista.innerHTML = "";
+  alerta.classList.add("oculto");
+
+  let hayCambios = false;
+
+  for (const id in camposMapa) {
+    const el = document.getElementById(id);
+    if (!el) continue;
+
+    const actual = (el.value || "").trim();
+    const inicial = (valoresIniciales[id] || "").trim();
+
+    if (actual !== inicial) {
+      hayCambios = true;
+
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <strong>${camposMapa[id]}:</strong><br>
+        <span style="color:#777;">Antes:</span> ${inicial || "(vacío)"}<br>
+        <span style="color:#333;">Después:</span> ${actual || "(vacío)"}
+      `;
+      lista.appendChild(li);
+    }
+  }
+
+  if (!hayCambios) {
+    alerta.classList.remove("oculto");
+    return;
+  }
+
+  document.getElementById("modalConfirmacion").classList.remove("oculto");
+}
+
+function cerrarModal() {
+  document.getElementById("modalConfirmacion").classList.add("oculto");
+}
+
+function enviarFormulario() {
+  document.getElementById("formModificar").submit();
+}
+</script>
+
 {% endblock %}

@@ -7,7 +7,6 @@
 {% endblock %}
 
 {% block contenido %}
-<!-- Enlaza tus estilos globales y de formularios -->
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/formularios.css') }}">
 
@@ -23,7 +22,7 @@
       <div class="alerta-error">{{ error }}</div>
     {% endif %}
 
-    <form method="post" action="/alumnos/modificar_contrasena" class="formulario" id="form-contrasena">
+    <form method="post" action="/alumnos/modificar-contrasena" class="formulario" id="form-contrasena">
       <fieldset>
         <legend>Seleccionar alumno</legend>
         <label for="alumno">Alumno:</label>
@@ -35,40 +34,99 @@
         </select>
       </fieldset>
 
-      <fieldset>
-        <legend>Nueva contraseña</legend>
-        <label for="contrasena">Contraseña:</label>
-        <input type="password" name="contrasena" id="contrasena" required>
-      </fieldset>
+      <input type="hidden" name="contrasena" id="contrasena">
 
       <div class="form-actions">
-        <button type="submit" class="btn btn-primary" id="submit-btn">Actualizar contraseña</button>
+        <button type="button" class="btn btn-primary" id="btn-cambiar">Cambiar contraseña</button>
         <a href="/dashboard" class="btn-regresar">Regresar</a>
       </div>
     </form>
   </div>
 </main>
 
-<script>
-  window.addEventListener('DOMContentLoaded', () => {
-    const mensaje = document.querySelector('.alerta-exito');
-    if (mensaje) {
-      document.getElementById('form-contrasena').reset();
-    }
+<!-- MODAL CONFIRMACIÓN -->
+<div id="modalConfirmacion" class="modal oculto">
+  <div class="modal-contenido">
+    <h3>¿Seguro que quieres cambiar la contraseña?</h3>
+    <p>Se generará una nueva contraseña aleatoria.</p>
 
+    <div class="modal-botones">
+      <button id="btn-confirmar" class="btn btn-primary">Sí, cambiar</button>
+      <button onclick="cerrarModalConfirmacion()" class="btn btn-regresar">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL FINAL -->
+<div id="modalContrasenaFinal" class="modal oculto">
+  <div class="modal-contenido">
+    <h3>Contraseña modificada con éxito</h3>
+
+    <p>La nueva contraseña del alumno es:</p>
+    <p id="textoContrasenaFinal" class="contrasena-final-text"></p>
+
+    <div class="modal-botones">
+      <button onclick="copiarContrasena()" class="btn btn-primary">📋 Copiar</button>
+      <button onclick="cerrarModalFinal()" class="btn btn-regresar">Aceptar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function generarContrasena() {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let pass = "";
+    for (let i = 0; i < 4; i++) {
+      pass += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return pass;
+  }
+
+  function cerrarModalConfirmacion() {
+    document.getElementById("modalConfirmacion").classList.add("oculto");
+  }
+
+  function cerrarModalFinal() {
+    document.getElementById("modalContrasenaFinal").classList.add("oculto");
+    document.getElementById("form-contrasena").submit();
+  }
+
+  function copiarContrasena() {
+    const texto = document.getElementById("textoContrasenaFinal").textContent;
+    navigator.clipboard.writeText(texto).then(() => {
+      const btn = document.querySelector("#modalContrasenaFinal .btn.btn-primary");
+      btn.textContent = "✔ Copiada";
+      setTimeout(() => btn.textContent = "📋 Copiar", 1200);
+    });
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('form-contrasena');
     const alumnoSelect = document.getElementById('alumno');
     const contrasenaInput = document.getElementById('contrasena');
-    const submitBtn = document.getElementById('submit-btn');
+    const btnCambiar = document.getElementById('btn-cambiar');
+    const btnConfirmar = document.getElementById('btn-confirmar');
 
-    function validarFormulario() {
-      submitBtn.disabled = !(alumnoSelect.value && contrasenaInput.value);
-    }
+    form.addEventListener("submit", e => e.preventDefault());
 
-    alumnoSelect.addEventListener('change', validarFormulario);
-    contrasenaInput.addEventListener('input', validarFormulario);
+    btnCambiar.addEventListener('click', () => {
+      if (!alumnoSelect.value) {
+        alert("Selecciona un alumno antes de continuar.");
+        return;
+      }
+      document.getElementById("modalConfirmacion").classList.remove("oculto");
+    });
 
-    // Inicializa estado del botón
-    validarFormulario();
+    btnConfirmar.addEventListener('click', () => {
+      cerrarModalConfirmacion();
+
+      const nueva = generarContrasena();
+      contrasenaInput.value = nueva;
+
+      document.getElementById("textoContrasenaFinal").textContent = nueva;
+      document.getElementById("modalContrasenaFinal").classList.remove("oculto");
+    });
   });
 </script>
+
 {% endblock %}
