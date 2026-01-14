@@ -5,44 +5,266 @@
 {% endblock %}
 
 {% block contenido %}
-<div class="dashboard-main">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/formularios.css') }}">
 
+<style>
+.acciones-derecha {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.margen-superior {
+  margin-top: 20px;
+}
+
+.buscador-acciones {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 15px;
+}
+</style>
+
+<main class="dashboard-main">
   <div class="dashboard-body">
-    <h2>Consulta de proyectos</h2>
 
-    <form method="get" action="/proyectos/consulta" class="formulario-proyecto">
-      <fieldset>
-        <legend>Filtros</legend>
+    <div class="titulo-alineado">
+      <h2>Consulta de proyectos</h2>
+    </div>
 
-        <label for="proyecto">Proyecto:</label>
-        <select name="proyecto" id="proyecto">
-          <option value="">Seleccione un proyecto...</option>
-          {% for proyecto in proyectos %}
-            <option value="{{ proyecto.id }}">{{ proyecto.nombre }}</option>
-          {% endfor %}
-        </select>
+    <!-- BUSCADOR -->
+    <form method="get" action="/proyectos/consulta" class="formulario formulario--wide">
+      <fieldset id="buscador">
+        <legend>Buscar proyecto</legend>
+
+        <label for="nombre_busqueda">Nombre del proyecto:</label>
+        <input 
+          type="text" 
+          id="nombre_busqueda" 
+          name="nombre_busqueda" 
+          placeholder="Ingrese el nombre del proyecto..."
+          autocomplete="off"
+        >
 
         <label for="area">Área:</label>
-        <select name="area" id="area">
-          <option value="">Seleccione una área...</option>
+        <select id="area" name="area">
+          <option value="">Todas...</option>
           {% for a in areas %}
             <option value="{{ a }}">{{ a }}</option>
           {% endfor %}
         </select>
 
         <label for="estado">Estado:</label>
-        <select name="estado" id="estado">
-          <option value="">Seleccione estado...</option>
+        <select id="estado" name="estado">
+          <option value="">Todos...</option>
           {% for e in estados %}
             <option value="{{ e }}">{{ e }}</option>
           {% endfor %}
         </select>
-      </fieldset>
 
-      <div class="form-actions">
-        <button type="submit">Buscar proyectos</button>
-      </div>
+        <div class="buscador-acciones">
+          <button type="button" id="btnBuscar" class="btn btn-primary">Buscar</button>
+        </div>
+
+      </fieldset>
     </form>
+
+    <!-- TABLA DE RESULTADOS -->
+    <div id="tabla-sugerencias" class="tabla-contenedor oculto">
+      <table class="tabla-institucional">
+        <thead>
+          <tr>
+            <th>Proyecto</th>
+            <th>Área</th>
+            <th>Estado</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody id="cuerpo-sugerencias"></tbody>
+      </table>
+    </div>
+
+    <!-- DETALLES DEL PROYECTO -->
+    <div id="detallesProyecto" class="acciones-alumno oculto">
+      <h3 id="tituloDetalle"></h3>
+
+      <p><strong>Área:</strong> <span id="areaDetalle"></span></p>
+      <p><strong>Estado:</strong> <span id="estadoDetalle"></span></p>
+
+      <p><strong>Alumnos requeridos:</strong> <span id="alumnosReqDetalle"></span></p>
+      <p><strong>Alumnos asignados:</strong> <span id="alumnosAsigDetalle"></span></p>
+
+      <p><strong>Descripción:</strong></p>
+      <p id="descripcionDetalle"></p>
+
+      <p><strong>Responsable:</strong> <span id="responsableDetalle"></span></p>
+      <p><strong>Fecha inicio:</strong> <span id="inicioDetalle"></span></p>
+      <p><strong>Fecha fin:</strong> <span id="finDetalle"></span></p>
+
+      <div class="acciones-proyecto acciones-derecha">
+        <a id="btnModificar" class="btn btn-primary">Modificar</a>
+        <button id="btnTerminar" class="btn btn-danger">Terminar</button>
+      </div>
+
+      <button type="button" id="btnRegresar" class="btn-regresar margen-superior">Regresar</button>
+    </div>
+
+  </div>
+</main>
+
+<!-- MODAL CONFIRMACIÓN -->
+<div class="modal-confirmacion oculto" id="modalConfirmacion">
+  <div class="modal-contenido">
+    <h3>¿Deseas terminar este proyecto?</h3>
+    <div class="modal-actions">
+      <button class="btn-modal" id="confirmarTerminar">Aceptar</button>
+      <button class="btn-modal-error" onclick="cerrarConfirmacion()">Cancelar</button>
+    </div>
   </div>
 </div>
+<div class="modal-overlay oculto" id="overlayConfirmacion" onclick="cerrarConfirmacion()"></div>
+
+<!-- MODAL ÉXITO -->
+<div class="modal-exito oculto" id="modalExito">
+  <div class="modal-contenido">
+    <h3>✔ Proyecto terminado</h3>
+    <p>El proyecto ha sido terminado correctamente.</p>
+    <button class="btn-modal" onclick="cerrarExito()">Aceptar</button>
+  </div>
+</div>
+<div class="modal-overlay oculto" id="overlayExito" onclick="cerrarExito()"></div>
+
+<script>
+let proyectoSeleccionado = null;
+
+function actualizarTabla() {
+  const texto = document.getElementById('nombre_busqueda').value.trim();
+  const area = document.getElementById('area').value;
+  const estado = document.getElementById('estado').value;
+
+  const contenedor = document.getElementById('tabla-sugerencias');
+  const cuerpo = document.getElementById('cuerpo-sugerencias');
+
+  if (texto.length === 0 && area === "" && estado === "") {
+    fetch('/proyectos/sugerencias')
+      .then(res => res.json())
+      .then(data => {
+        cuerpo.innerHTML = '';
+
+        data.forEach(p => {
+          const fila = document.createElement('tr');
+          fila.innerHTML = `
+            <td>${p.nombre}</td>
+            <td>${p.area}</td>
+            <td>${p.estado}</td>
+            <td><button type="button" class="accion-link" data-id="${p.id}">Seleccionar</button></td>
+          `;
+          cuerpo.appendChild(fila);
+        });
+
+        contenedor.classList.remove('oculto');
+      });
+
+    return;
+  }
+
+  const url = `/proyectos/sugerencias?texto=${encodeURIComponent(texto)}&area=${encodeURIComponent(area)}&estado=${encodeURIComponent(estado)}`;
+
+  fetch(url)
+    .then(res => res.json())
+    .then(data => {
+      cuerpo.innerHTML = '';
+
+      if (data.length > 0) {
+        data.forEach(p => {
+          const fila = document.createElement('tr');
+          fila.innerHTML = `
+            <td>${p.nombre}</td>
+            <td>${p.area}</td>
+            <td>${p.estado}</td>
+            <td><button type="button" class="accion-link" data-id="${p.id}">Seleccionar</button></td>
+          `;
+          cuerpo.appendChild(fila);
+        });
+
+        contenedor.classList.remove('oculto');
+      } else {
+        contenedor.classList.add('oculto');
+      }
+    });
+}
+
+document.getElementById('nombre_busqueda').addEventListener('input', actualizarTabla);
+document.getElementById('area').addEventListener('change', actualizarTabla);
+document.getElementById('estado').addEventListener('change', actualizarTabla);
+document.getElementById('btnBuscar').addEventListener('click', actualizarTabla);
+
+document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('accion-link')) {
+    const id = e.target.getAttribute('data-id');
+    proyectoSeleccionado = id;
+
+    fetch(`/proyectos/detalles/${id}`)
+      .then(res => res.json())
+      .then(data => {
+
+        document.getElementById('buscador').classList.add('oculto');
+        document.getElementById('tabla-sugerencias').classList.add('oculto');
+        document.getElementById('detallesProyecto').classList.remove('oculto');
+
+        document.getElementById('tituloDetalle').textContent = data.titulo;
+        document.getElementById('areaDetalle').textContent = data.area;
+        document.getElementById('estadoDetalle').textContent = data.estado;
+
+        document.getElementById('alumnosReqDetalle').textContent = data.alumnos || 0;
+        document.getElementById('alumnosAsigDetalle').textContent = data.alumnos_asignados || 0;
+
+        document.getElementById('descripcionDetalle').textContent = data.descripcion || "Sin descripción";
+        document.getElementById('responsableDetalle').textContent = data.responsable || "No especificado";
+        document.getElementById('inicioDetalle').textContent = data.fecha_inicio || "N/A";
+        document.getElementById('finDetalle').textContent = data.fecha_fin || "N/A";
+
+        document.getElementById('btnModificar').href = `/proyectos/modificar?id=${id}`;
+      });
+  }
+});
+
+document.getElementById('btnTerminar').addEventListener('click', () => {
+  document.getElementById('modalConfirmacion').classList.remove('oculto');
+  document.getElementById('overlayConfirmacion').classList.remove('oculto');
+});
+
+document.getElementById('confirmarTerminar').addEventListener('click', () => {
+  fetch('/proyectos/terminar', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `proyecto=${proyectoSeleccionado}`
+  })
+  .then(() => {
+    cerrarConfirmacion();
+    document.getElementById('modalExito').classList.remove('oculto');
+    document.getElementById('overlayExito').classList.remove('oculto');
+  });
+});
+
+function cerrarConfirmacion() {
+  document.getElementById('modalConfirmacion').classList.add('oculto');
+  document.getElementById('overlayConfirmacion').classList.add('oculto');
+}
+
+function cerrarExito() {
+  document.getElementById('modalExito').classList.add('oculto');
+  document.getElementById('overlayExito').classList.add('oculto');
+  location.reload();
+}
+
+document.getElementById('btnRegresar').addEventListener('click', () => {
+  document.getElementById('detallesProyecto').classList.add('oculto');
+  document.getElementById('buscador').classList.remove('oculto');
+  document.getElementById('tabla-sugerencias').classList.remove('oculto');
+});
+</script>
+
 {% endblock %}

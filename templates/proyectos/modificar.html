@@ -9,49 +9,74 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/formularios.css') }}">
 
 <main class="dashboard-main">
-
   <div class="dashboard-body">
-    <h2>Modificar proyectos</h2>
 
-    <form method="post" action="/proyectos/modificar" class="formulario-proyecto">
+    <div class="titulo-alineado">
+      <h2>Modificar proyectos</h2>
+    </div>
+
+    {% if mensaje %}
+      <div class="alerta-bootstrap alerta-success">
+        {{ mensaje }}
+      </div>
+    {% endif %}
+
+    {% if error %}
+      <div class="alerta-bootstrap alerta-error">
+        {{ error }}
+      </div>
+    {% endif %}
+
+    <form method="post" action="/proyectos/modificar" class="formulario formulario--wide">
+
       <fieldset>
         <legend>Seleccionar proyecto</legend>
 
         <label for="proyecto">Proyecto:</label>
-        <select name="proyecto" id="proyecto" required>
+        <select name="proyecto" id="proyecto" required onchange="window.location='?id=' + this.value">
           <option value="">Selecciona el proyecto...</option>
-          {% for proyecto in proyectos %}
-            <option value="{{ proyecto.id }}">{{ proyecto.nombre }}</option>
+          {% for p in proyectos %}
+            <option value="{{ p.id }}"
+              {% if proyecto and p.id == proyecto._id|string %}selected{% endif %}>
+              {{ p.nombre }}
+            </option>
           {% endfor %}
         </select>
       </fieldset>
 
+      {% if proyecto %}
       <fieldset>
-        <legend>Datos nuevos</legend>
+        <legend>Datos del proyecto</legend>
 
-        <label for="nuevo_nombre">Nuevo nombre:</label>
-        <input type="text" name="nuevo_nombre" id="nuevo_nombre">
+        <label for="nuevo_nombre">Nombre:</label>
+        <input type="text" name="nuevo_nombre" id="nuevo_nombre"
+               value="{{ proyecto.titulo }}">
 
-        <label for="nueva_area">Nueva área:</label>
+        <label for="nueva_area">Área:</label>
         <select name="nueva_area" id="nueva_area">
           <option value="">Seleccione una área...</option>
-          <option value="Administrativa">Administrativa</option>
-          <option value="Técnica">Técnica</option>
-          <option value="Social">Social</option>
-          <option value="Investigación">Investigación</option>
+          <option value="Administrativa" {% if proyecto.area == 'Administrativa' %}selected{% endif %}>Administrativa</option>
+          <option value="Técnica" {% if proyecto.area == 'Técnica' %}selected{% endif %}>Técnica</option>
+          <option value="Social" {% if proyecto.area == 'Social' %}selected{% endif %}>Social</option>
+          <option value="Investigación" {% if proyecto.area == 'Investigación' %}selected{% endif %}>Investigación</option>
         </select>
 
         <label for="nuevos_alumnos">Alumnos requeridos:</label>
-        <input type="number" name="nuevos_alumnos" id="nuevos_alumnos" min="1">
+        <input type="number" name="nuevos_alumnos" id="nuevos_alumnos" min="1"
+               value="{{ proyecto.alumnos_requeridos }}">
 
         <label for="nueva_descripcion">Descripción:</label>
-        <textarea name="nueva_descripcion" id="nueva_descripcion" rows="4"></textarea>
+        <textarea name="nueva_descripcion" id="nueva_descripcion" rows="4">{{ proyecto.descripcion }}</textarea>
       </fieldset>
+      {% endif %}
 
       <div class="form-actions">
-        <button type="submit">Guardar cambios</button>
+        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+        <a href="/dashboard" class="btn-regresar">Regresar</a>
       </div>
+
     </form>
+
   </div>
 </main>
 {% endblock %}

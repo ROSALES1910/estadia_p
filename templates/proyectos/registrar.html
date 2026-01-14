@@ -8,34 +8,59 @@
 
 <main class="dashboard-main">
   <div class="dashboard-body">
-    <h2>Alta de proyectos</h2>
 
-    <form method="post" action="{{ url_for('registrar_proyecto') }}" class="formulario-proyecto">
+    <div class="titulo-alineado">
+      <h2>Alta de proyectos</h2>
+    </div>
+
+    {% if mensaje %}
+      <div class="alerta-bootstrap alerta-success">
+        {{ mensaje }}
+      </div>
+    {% endif %}
+
+    {% if error %}
+      <div class="alerta-bootstrap alerta-error">
+        {{ error }}
+      </div>
+    {% endif %}
+
+    <form method="post" action="{{ url_for('registrar_proyecto') }}" class="formulario formulario--wide">
+
       <fieldset>
         <legend>Datos del proyecto</legend>
 
-        <label for="nombre">Nombre:</label>
-        <input type="text" name="nombre" id="nombre" required>
+        <label for="titulo">Nombre del proyecto:</label>
+        <input type="text" name="titulo" id="titulo" required>
 
         <label for="area">Área:</label>
-        <select name="area" id="area" required>
-          <option value="">Seleccione un área...</option>
-          {% for a in areas %}
-            <option value="{{ a }}">{{ a }}</option>
-          {% endfor %}
-        </select>
+        <input type="text" name="area" id="area" required>
 
         <label for="alumnos_requeridos">Alumnos requeridos:</label>
         <input type="number" name="alumnos_requeridos" id="alumnos_requeridos" min="1" required>
 
+        <label for="fecha_inicio">Fecha de inicio:</label>
+        <input type="date" name="fecha_inicio" id="fecha_inicio" required>
+
+        <label for="fecha_fin">Fecha de fin:</label>
+        <input type="date" name="fecha_fin" id="fecha_fin">
+
+        <label for="responsable">Responsable:</label>
+        <input type="text" name="responsable" id="responsable" required>
+
         <label for="descripcion">Descripción:</label>
         <textarea name="descripcion" id="descripcion" rows="4" required></textarea>
+
+
       </fieldset>
 
       <div class="form-actions">
-        <button type="submit">➕ Registrar proyecto</button>
+        <button type="submit" class="btn btn-primary">➕ Registrar proyecto</button>
+        <a href="/dashboard" class="btn-regresar">Regresar</a>
       </div>
+
     </form>
+
   </div>
 </main>
 {% endblock %}

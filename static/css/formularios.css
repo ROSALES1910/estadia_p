@@ -8,7 +8,6 @@
   box-sizing: border-box;
 }
 
-/* FORMULARIO ANCHO */
 .formulario--wide {
   width: 100%;
   max-width: none;
@@ -16,7 +15,7 @@
   box-sizing: border-box;
 }
 
-/* TÍTULO */
+/* ========== TÍTULO ========== */
 .titulo-alineado {
   width: 100%;
   margin-bottom: 20px;
@@ -33,7 +32,7 @@
   color: #333;
 }
 
-/* ALERTAS */
+/* ========== ALERTAS ========== */
 .alerta-bootstrap {
   width: 100%;
   margin-bottom: 20px;
@@ -48,10 +47,10 @@
 
 @keyframes fadeInDown {
   from { opacity: 0; transform: translateY(-8px); }
-  to { opacity: 1; transform: translateY(0); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-/* CONTENEDOR */
+/* ========== CONTENEDORES ========== */
 .dashboard-body {
   width: 100%;
   padding: 0;
@@ -65,7 +64,7 @@
   overflow-y: auto;
 }
 
-/* FORMULARIO EN DOS COLUMNAS */
+/* ========== FORMULARIO EN DOS COLUMNAS ========== */
 .form-secciones {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -76,7 +75,7 @@
   grid-column: 1 / -1;
 }
 
-/* FIELDSETS */
+/* ========== FIELDSETS ========== */
 .formulario fieldset {
   border: 1px solid #ccc;
   padding: 1rem;
@@ -89,7 +88,7 @@
   margin-bottom: 12px;
 }
 
-/* INPUTS */
+/* ========== INPUTS ========== */
 .formulario label {
   display: block;
   margin-top: 0.8rem;
@@ -113,7 +112,7 @@
   resize: vertical;
 }
 
-/* BOTONES */
+/* ========== BOTONES ========== */
 .form-actions {
   margin-top: 1.5rem;
   display: flex;
@@ -134,46 +133,178 @@
   background: #333;
 }
 
-/* ========== MODALES (CORREGIDO) ========== */
-.modal {
+/* ========== MODAL DE ÉXITO ========== */
+.modal-exito {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  background: #ffffff;
+  padding: 30px 40px;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  z-index: 3000;
+  animation: fadeInModal 0.35s ease;
+  width: 380px;
+  text-align: center;
+}
+
+.modal-exito h3 {
+  margin: 0 0 10px;
+  font-size: 22px;
+  font-weight: 800;
+  color: #155724;
+}
+
+.modal-exito p {
+  font-size: 16px;
+  color: #155724;
+  margin-bottom: 20px;
+}
+
+.btn-modal {
+  background: #28a745;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-modal:hover {
+  background: #218838;
+}
+
+/* ========== MODAL DE ERROR ========== */
+.modal-error {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #ffffff;
+  padding: 30px 40px;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  z-index: 3000;
+  width: 380px;
+  text-align: center;
+  animation: fadeInModal 0.35s ease;
+}
+
+.modal-error h3 {
+  margin: 0 0 10px;
+  font-size: 22px;
+  font-weight: 800;
+  color: #a94442;
+}
+
+.modal-error p {
+  font-size: 16px;
+  color: #a94442;
+  margin-bottom: 20px;
+}
+
+.btn-modal-error {
+  background: #d9534f;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-modal-error:hover {
+  background: #c9302c;
+}
+
+/* ========== MODAL DE CONFIRMACIÓN ========== */
+.modal-confirmacion {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #ffffff;
+  padding: 30px 40px;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  z-index: 3000;
+  width: 380px;
+  text-align: center;
+  animation: fadeInModal 0.35s ease;
+}
+
+.modal-confirmacion h3 {
+  margin: 0 0 20px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #333;
+}
+
+.modal-confirmacion .modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+/* ========== OVERLAYS Y ANIMACIONES ========== */
+.modal-overlay,
+#modalOverlayError,
+#overlayConfirmacion {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2000;
+  background: rgba(0,0,0,0.35);
+  z-index: 2500;
+  animation: fadeInOverlay 0.35s ease;
 }
 
+@keyframes fadeInModal {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+  to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes fadeInOverlay {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ========== UTILIDADES ========== */
 .oculto {
   display: none;
 }
 
-/* Solo botones, sin caja blanca */
-.modal-actions {
-  background: transparent;
-  display: flex;
-  gap: 20px;
-  padding: 20px;
+/* ========== TABLA DE RESULTADOS DEL BUSCADOR ========== */
+#tabla-sugerencias {
+  margin-top: 10px;
 }
 
-.btn-secundario {
-  background: #ccc;
-  color: #333;
-  padding: 10px 14px;
-  border-radius: 8px;
-  font-weight: 600;
+.tabla-institucional {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 0 6px rgba(0,0,0,0.1);
 }
 
-/* TEXTO DE CONTRASEÑA FINAL */
-.contrasena-final-text {
-  font-size: 22px;
-  font-weight: bold;
-  text-align: center;
-  margin: 15px 0;
+.tabla-institucional th {
+  background: #f0f0f0;
+  padding: 10px;
+  font-weight: 700;
+  text-align: left;
+}
+
+.tabla-institucional td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.tabla-institucional tr:hover {
+  background: #fafafa;
 }
 
 /* ========== ACCIONES DISPONIBLES ========== */
@@ -230,29 +361,7 @@
   background: #f8caca;
 }
 
-/* ========== LISTA DE RESULTADOS DEL BUSCADOR ========== */
-.lista-resultados {
-  list-style: none;
-  margin-top: 10px;
-  padding: 0;
-  background: #fff;
-  border-radius: 6px;
-  box-shadow: 0 0 6px rgba(0,0,0,0.1);
-  max-height: 200px;
-  overflow-y: auto;
-}
-
-.lista-resultados li {
-  padding: 10px;
-  cursor: pointer;
-  border-bottom: 1px solid #eee;
-}
-
-.lista-resultados li:hover {
-  background: #f5f5f5;
-}
-
-/* RESPONSIVE */
+/* ========== RESPONSIVE ========== */
 @media (max-width: 900px) {
   .form-secciones {
     grid-template-columns: 1fr;
@@ -270,150 +379,4 @@
     padding-left: 20px;
     padding-right: 20px;
   }
-}
-
-/* ========== BUSCADOR Y TABLA DE RESULTADOS ========== */
-#buscador {
-  margin-bottom: 20px;
-}
-
-#buscador input {
-  width: 100%;
-  padding: 10px 14px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  background: #f9f9f9;
-  font-size: 15px;
-}
-
-#tablaResultados {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-  display: none;
-  background: #fff;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 0 6px rgba(0,0,0,0.1);
-}
-
-#tablaResultados th,
-#tablaResultados td {
-  border: 1px solid #ddd;
-  padding: 10px;
-  font-size: 14px;
-}
-
-#tablaResultados th {
-  background: #f0f0f0;
-  font-weight: bold;
-  text-align: left;
-}
-
-#tablaResultados button {
-  padding: 6px 10px;
-  background: #007bff;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 13px;
-}
-
-#tablaResultados button:hover {
-  background: #0056b3;
-}
-
-/* ========== FORMULARIO DEL ALUMNO ========== */
-#formularioAlumno {
-  margin-top: 25px;
-}
-
-/* ========== PANEL DESLIZABLE PROFESIONAL ========== */
-.panel-acciones {
-  position: fixed;
-  top: 0;
-  right: -380px;
-  width: 380px;
-  height: 100%;
-  background: #ffffff;
-  border-left: 1px solid #dcdcdc;
-  box-shadow: -4px 0 12px rgba(0,0,0,0.15);
-  transition: right 0.35s ease;
-  padding: 25px;
-  z-index: 9999;
-}
-
-.panel-acciones.activo {
-  right: 0;
-}
-
-.panel-header {
-  font-size: 20px;
-  font-weight: 700;
-  margin-bottom: 15px;
-  color: #333;
-}
-
-.panel-close {
-  position: absolute;
-  top: 12px;
-  right: 15px;
-  font-size: 22px;
-  cursor: pointer;
-  color: #444;
-}
-
-.panel-acciones ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.panel-acciones li {
-  margin-bottom: 12px;
-}
-
-.panel-acciones button {
-  width: 100%;
-  text-align: left;
-  padding: 10px 12px;
-  border: none;
-  background: #f5f5f5;
-  border-radius: 6px;
-  font-size: 15px;
-  cursor: pointer;
-  transition: background 0.2s ease;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.panel-acciones button:hover {
-  background: #e8e8e8;
-}
-
-.panel-acciones button.btn-eliminar {
-  background: #ffe0e0;
-  color: #a94442;
-}
-
-.panel-acciones button.btn-eliminar:hover {
-  background: #f8caca;
-}
-
-/* ========== OVERLAY ========== */
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.25);
-  display: none;
-  z-index: 9998;
-}
-
-.overlay.activo {
-  display: block;
 }

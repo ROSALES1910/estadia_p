@@ -739,5 +739,313 @@ def constancia_horas():
     alumnos = list(alumnos_col.find({}, {"_id": 0, "matricula": 1, "nombre": 1}))
     return render_template('documentos/horas.html', alumnos=alumnos)
 
+# ========== ALTA DE PROYECTOS ==========
+
+@app.route('/proyectos/registrar', methods=['GET', 'POST'])
+def registrar_proyecto():
+    mensaje = request.args.get('mensaje')
+    error = None
+
+    if request.method == 'POST':
+        titulo = request.form.get('titulo')
+        area = request.form.get('area')
+        alumnos_requeridos = request.form.get('alumnos_requeridos')
+        descripcion = request.form.get('descripcion')
+        fecha_inicio = request.form.get('fecha_inicio')
+        fecha_fin = request.form.get('fecha_fin')
+        responsable = request.form.get('responsable')
+
+        if not titulo or not area or not alumnos_requeridos or not descripcion or not fecha_inicio or not responsable:
+            error = "Todos los campos obligatorios deben ser llenados."
+        else:
+            try:
+                alumnos_requeridos = int(alumnos_requeridos)
+            except:
+                error = "El número de alumnos debe ser un entero."
+
+        if not error:
+            nuevo_proyecto = {
+                "titulo": titulo,
+                "area": area,
+                "alumnos_requeridos": alumnos_requeridos,
+                "descripcion": descripcion,
+                "fecha_inicio": fecha_inicio,
+                "fecha_fin": fecha_fin,
+                "responsable": responsable,
+                "estado": "pendiente"
+            }
+
+            proyectos_col.insert_one(nuevo_proyecto)
+
+            return redirect(url_for(
+                'registrar_proyecto',
+                mensaje="Proyecto registrado correctamente"
+            ))
+
+    return render_template(
+        'proyectos/registrar.html',
+        mensaje=mensaje,
+        error=error
+    )
+
+
+# ========== MODIFICAR PROYECTOS ==========
+
+@app.route('/proyectos/modificar', methods=['GET', 'POST'])
+def modificar_proyecto():
+    mensaje = request.args.get('mensaje')
+    error = None
+
+    proyectos = list(proyectos_col.find({}, {"_id": 1, "titulo": 1}))
+
+    proyecto_id_get = request.args.get("id")
+    proyecto_seleccionado = None
+
+    if proyecto_id_get:
+        try:
+            p = proyectos_col.find_one({"_id": ObjectId(proyecto_id_get)})
+            if p:
+                proyecto_seleccionado = {
+                    "_id": str(p["_id"]),
+                    "titulo": p.get("titulo", ""),
+                    "area": p.get("area", ""),
+                    "alumnos_requeridos": p.get("alumnos_requeridos", ""),
+                    "descripcion": p.get("descripcion", ""),
+                    "fecha_inicio": p.get("fecha_inicio", ""),
+                    "fecha_fin": p.get("fecha_fin", ""),
+                    "responsable": p.get("responsable", "")
+                }
+        except:
+            proyecto_seleccionado = None
+
+    if request.method == 'POST':
+        proyecto_id = request.form.get('proyecto')
+        nuevo_nombre = request.form.get('nuevo_nombre')
+        nueva_area = request.form.get('nueva_area')
+        nuevos_alumnos = request.form.get('nuevos_alumnos')
+        nueva_descripcion = request.form.get('nueva_descripcion')
+        nueva_fecha_inicio = request.form.get('nueva_fecha_inicio')
+        nueva_fecha_fin = request.form.get('nueva_fecha_fin')
+        nuevo_responsable = request.form.get('nuevo_responsable')
+
+        if not proyecto_id:
+            error = "Debes seleccionar un proyecto."
+        else:
+            cambios = {}
+
+            if nuevo_nombre:
+                cambios["titulo"] = nuevo_nombre
+
+            if nueva_area:
+                cambios["area"] = nueva_area
+
+            if nuevos_alumnos:
+                try:
+                    cambios["alumnos_requeridos"] = int(nuevos_alumnos)
+                except:
+                    error = "El número de alumnos debe ser un entero."
+
+            if nueva_descripcion:
+                cambios["descripcion"] = nueva_descripcion
+
+            if nueva_fecha_inicio:
+                cambios["fecha_inicio"] = nueva_fecha_inicio
+
+            if nueva_fecha_fin:
+                cambios["fecha_fin"] = nueva_fecha_fin
+
+            if nuevo_responsable:
+                cambios["responsable"] = nuevo_responsable
+
+            if cambios and not error:
+                proyectos_col.update_one(
+                    {"_id": ObjectId(proyecto_id)},
+                    {"$set": cambios}
+                )
+
+                return redirect(url_for(
+                    'modificar_proyecto',
+                    mensaje="Proyecto modificado correctamente"
+                ))
+
+            elif not error:
+                error = "No se ingresaron cambios."
+
+    return render_template(
+        'proyectos/modificar.html',
+        proyectos=[{
+            "id": str(p["_id"]),
+            "nombre": p["titulo"]
+        } for p in proyectos],
+        proyecto=proyecto_seleccionado,
+        mensaje=mensaje,
+        error=error
+    )
+
+
+# ========== TERMINAR PROYECTOS ==========
+
+@app.route('/proyectos/terminar', methods=['GET', 'POST'])
+def terminar_proyecto():
+    mensaje = request.args.get('mensaje')
+    error = None
+
+    # Lista de proyectos NO finalizados
+    proyectos = list(proyectos_col.find(
+        {"estado": {"$ne": "finalizado"}},
+        {"_id": 1, "titulo": 1}
+    ))
+
+    # ID seleccionado desde el SELECT
+    proyecto_id_get = request.args.get("proyecto")
+    proyecto_seleccionado = None
+
+    # Si el usuario seleccionó un proyecto, cargar detalles
+    if proyecto_id_get:
+        try:
+            p = proyectos_col.find_one({"_id": ObjectId(proyecto_id_get)})
+            if p:
+                proyecto_seleccionado = {
+                    "_id": str(p["_id"]),
+                    "titulo": p.get("titulo", ""),
+                    "area": p.get("area", ""),
+                    "estado": p.get("estado", ""),
+                    "responsable": p.get("responsable", ""),
+                    "descripcion": p.get("descripcion", ""),
+                    "fecha_inicio": p.get("fecha_inicio", ""),
+                    "fecha_fin": p.get("fecha_fin", ""),
+                    "alumnos_requeridos": p.get("alumnos_requeridos", 0),
+                    "alumnos_asignados": len(p.get("alumnos", []))
+                }
+        except:
+            proyecto_seleccionado = None
+
+    # POST → Terminar proyecto
+    if request.method == 'POST':
+        proyecto_id = request.form.get('proyecto')
+
+        if not proyecto_id:
+            error = "Debes seleccionar un proyecto antes de marcarlo como terminado."
+        else:
+            proyectos_col.update_one(
+                {"_id": ObjectId(proyecto_id)},
+                {"$set": {"estado": "finalizado"}}
+            )
+
+            return redirect(url_for(
+                'terminar_proyecto',
+                mensaje="Proyecto marcado como terminado correctamente"
+            ))
+
+    return render_template(
+        'proyectos/terminar.html',
+        proyectos=[{
+            "id": str(p["_id"]),
+            "nombre": p["titulo"]
+        } for p in proyectos],
+        proyecto=proyecto_seleccionado,
+        mensaje=mensaje,
+        error=error
+    )
+
+
+# ========== CONSULTA DE PROYECTOS ==========
+
+@app.route('/proyectos/consulta', methods=['GET'])
+def consulta_proyectos():
+    filtro_nombre = request.args.get('nombre_busqueda', '').strip()
+    filtro_area = request.args.get('area', '').strip()
+    filtro_estado = request.args.get('estado', '').strip()
+
+    query = {}
+
+    if filtro_nombre:
+        query["titulo"] = {"$regex": filtro_nombre, "$options": "i"}
+
+    if filtro_area:
+        query["area"] = filtro_area
+
+    if filtro_estado:
+        query["estado"] = filtro_estado
+
+    proyectos_cursor = proyectos_col.find(query)
+
+    proyectos = [{
+        "id": str(p["_id"]),
+        "nombre": p.get("titulo", ""),
+        "area": p.get("area", "No especificada"),
+        "estado": p.get("estado", "Sin estado"),
+        "alumnos_requeridos": p.get("alumnos_requeridos", 0),
+        "alumnos_asignados": len(p.get("alumnos", [])),
+        "descripcion": p.get("descripcion", ""),
+        "fecha_inicio": p.get("fecha_inicio", ""),
+        "fecha_fin": p.get("fecha_fin", ""),
+        "responsable": p.get("responsable", "")
+    } for p in proyectos_cursor]
+
+    areas = sorted([a for a in proyectos_col.distinct("area") if a])
+    estados = sorted([e for e in proyectos_col.distinct("estado") if e])
+
+    return render_template(
+        'proyectos/consulta.html',
+        proyectos_resultados=proyectos,
+        areas=areas,
+        estados=estados
+    )
+
+# ========== SUGERENCIAS DE PROYECTOS ==========
+
+@app.route('/proyectos/sugerencias')
+def sugerencias_proyectos():
+    texto = request.args.get('texto', '').strip()
+    area = request.args.get('area', '').strip()
+    estado = request.args.get('estado', '').strip()
+
+    query = {}
+
+    if texto:
+        query["titulo"] = {"$regex": texto, "$options": "i"}
+
+    if area:
+        query["area"] = area
+
+    if estado:
+        query["estado"] = estado
+
+    resultados = proyectos_col.find(query).limit(20)
+
+    sugerencias = [{
+        "id": str(p["_id"]),
+        "nombre": p.get("titulo", ""),
+        "area": p.get("area", "No especificada"),
+        "estado": p.get("estado", "Sin estado")
+    } for p in resultados]
+
+    return jsonify(sugerencias)
+
+
+# ========== DETALLES DE PROYECTO ==========
+
+@app.route('/proyectos/detalles/<id>')
+def detalles_proyecto(id):
+    proyecto = proyectos_col.find_one({"_id": ObjectId(id)})
+
+    if not proyecto:
+        return jsonify({"error": "Proyecto no encontrado"}), 404
+
+    detalles = {
+        "id": str(proyecto["_id"]),
+        "titulo": proyecto.get("titulo", ""),
+        "descripcion": proyecto.get("descripcion", ""),
+        "area": proyecto.get("area", "No especificada"),
+        "estado": proyecto.get("estado", "Sin estado"),
+        "fecha_inicio": proyecto.get("fecha_inicio", ""),
+        "fecha_fin": proyecto.get("fecha_fin", ""),
+        "responsable": proyecto.get("responsable", ""),
+        "alumnos": proyecto.get("alumnos_requeridos", 0),
+    }
+
+    return jsonify(detalles)
+
 if __name__ == "__main__":
     app.run(debug=True)

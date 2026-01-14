@@ -9,29 +9,146 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/formularios.css') }}">
 
 <main class="dashboard-main">
-
   <div class="dashboard-body">
-    <h2>Terminación de proyectos</h2>
 
-    <form method="post" action="/proyectos/terminar" class="formulario-proyecto">
+    <div class="titulo-alineado">
+      <h2>Terminación de proyectos</h2>
+    </div>
+
+    {% if error %}
+      <div class="alerta-bootstrap alerta-error">
+        {{ error }}
+      </div>
+    {% endif %}
+
+    <!-- FORMULARIO PRINCIPAL -->
+    <form id="formTerminar" method="post" action="/proyectos/terminar" class="formulario formulario--wide">
+
       <fieldset>
         <legend>Seleccionar proyecto</legend>
 
         <label for="proyecto">Proyecto:</label>
-        <select name="proyecto" id="proyecto" required>
+
+        <!-- SELECT QUE ENVÍA GET AUTOMÁTICAMENTE -->
+        <select name="proyecto" id="proyecto" onchange="cargarDetalles()">
           <option value="">Seleccione un proyecto...</option>
-          {% for proyecto in proyectos %}
-            <option value="{{ proyecto.id }}">{{ proyecto.nombre }}</option>
+          {% for p in proyectos %}
+            <option value="{{ p.id }}"
+              {% if proyecto and proyecto['_id'] == p.id %}selected{% endif %}>
+              {{ p.nombre }}
+            </option>
           {% endfor %}
         </select>
       </fieldset>
 
+      {% if proyecto %}
+      <fieldset>
+        <legend>Detalles del proyecto seleccionado</legend>
+
+        <p><strong>Título:</strong> {{ proyecto.titulo }}</p>
+        <p><strong>Área:</strong> {{ proyecto.area }}</p>
+        <p><strong>Estado:</strong> {{ proyecto.estado }}</p>
+
+        <p><strong>Alumnos requeridos:</strong> {{ proyecto.alumnos_requeridos }}</p>
+        <p><strong>Alumnos asignados:</strong> {{ proyecto.alumnos_asignados }}</p>
+
+        <p><strong>Responsable:</strong> {{ proyecto.responsable }}</p>
+
+        <p><strong>Descripción:</strong></p>
+        <p>{{ proyecto.descripcion }}</p>
+
+        <p><strong>Fecha inicio:</strong> {{ proyecto.fecha_inicio }}</p>
+        <p><strong>Fecha fin:</strong> {{ proyecto.fecha_fin }}</p>
+
+      </fieldset>
+      {% endif %}
+
       <div class="form-actions">
-        <button type="submit" onclick="return confirm('¿Deseas marcar este proyecto como terminado?')">
+        <button type="button" class="btn btn-primary" onclick="mostrarConfirmacion()">
           ✅ Terminar proyecto
         </button>
+        <a href="/dashboard" class="btn-regresar">Regresar</a>
       </div>
+
     </form>
+
   </div>
 </main>
+
+{% if mensaje %}
+<div class="modal-exito" id="modalExito">
+  <div class="modal-contenido">
+    <h3>✔ Proyecto terminado</h3>
+    <p>{{ mensaje }}</p>
+    <button class="btn-modal" onclick="cerrarModal()">Aceptar</button>
+  </div>
+</div>
+<div class="modal-overlay" id="modalOverlay" onclick="cerrarModal()"></div>
+{% endif %}
+
+<!-- MODAL CONFIRMACIÓN -->
+<div class="modal-confirmacion oculto" id="modalConfirmacion">
+  <div class="modal-contenido">
+    <h3>¿Deseas marcar este proyecto como terminado?</h3>
+    <div class="modal-actions">
+      <button class="btn-modal" onclick="enviarFormulario()">Aceptar</button>
+      <button class="btn-modal-error" onclick="cerrarConfirmacion()">Cancelar</button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay oculto" id="overlayConfirmacion" onclick="cerrarConfirmacion()"></div>
+
+<!-- MODAL ERROR -->
+<div class="modal-error oculto" id="modalError">
+  <div class="modal-error-contenido">
+    <h3>⚠ Selecciona un proyecto</h3>
+    <p>Debes seleccionar un proyecto antes de continuar.</p>
+    <button class="btn-modal-error" onclick="cerrarModalError()">Aceptar</button>
+  </div>
+</div>
+<div class="modal-overlay oculto" id="modalOverlayError" onclick="cerrarModalError()"></div>
+
+<script>
+/* Recargar página con GET al seleccionar proyecto */
+function cargarDetalles() {
+  const id = document.getElementById("proyecto").value;
+  if (id) {
+    window.location.href = `/proyectos/terminar?proyecto=${id}`;
+  }
+}
+
+/* Mostrar modal de confirmación */
+function mostrarConfirmacion() {
+  const select = document.getElementById("proyecto");
+  if (!select.value) {
+    document.getElementById("modalError").classList.remove("oculto");
+    document.getElementById("modalOverlayError").classList.remove("oculto");
+    return;
+  }
+  document.getElementById("modalConfirmacion").classList.remove("oculto");
+  document.getElementById("overlayConfirmacion").classList.remove("oculto");
+}
+
+/* Enviar formulario POST */
+function enviarFormulario() {
+  document.getElementById("formTerminar").submit();
+}
+
+/* Cerrar modales */
+function cerrarConfirmacion() {
+  document.getElementById("modalConfirmacion").classList.add("oculto");
+  document.getElementById("overlayConfirmacion").classList.add("oculto");
+}
+
+function cerrarModal() {
+  document.getElementById("modalExito").style.display = "none";
+  document.getElementById("modalOverlay").style.display = "none";
+}
+
+function cerrarModalError() {
+  document.getElementById("modalError").classList.add("oculto");
+  document.getElementById("modalOverlayError").classList.add("oculto");
+}
+</script>
+
 {% endblock %}
