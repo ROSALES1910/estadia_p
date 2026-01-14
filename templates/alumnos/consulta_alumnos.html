@@ -10,6 +10,165 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/formularios.css') }}">
 
+<style>
+/* ============================
+   ESTILOS ESPECÍFICOS DE ESTA PANTALLA
+   ============================ */
+
+/* Buscador */
+#buscador {
+  background: #fff;
+  padding: 20px 60px;
+  border-radius: 8px;
+  box-shadow: 0 0 6px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+
+#buscador label {
+  font-weight: 700;
+}
+
+#buscador input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: #f9f9f9;
+}
+
+/* Tabla de resultados */
+#tablaResultados {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 0 6px rgba(0,0,0,0.1);
+  margin-top: 20px;
+  display: none;
+}
+
+#tablaResultados th {
+  background: #f0f0f0;
+  padding: 12px;
+  font-weight: 700;
+  text-align: left;
+}
+
+#tablaResultados td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+#tablaResultados tr:hover {
+  background: #fafafa;
+}
+
+#tablaResultados button {
+  background: #007bff;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+#tablaResultados button:hover {
+  background: #0056b3;
+}
+
+/* Formulario del alumno */
+#formularioAlumno {
+  display: none;
+  margin-top: 30px;
+}
+
+/* Panel lateral */
+.panel-acciones {
+  position: fixed;
+  top: 0;
+  right: -350px;
+  width: 350px;
+  height: 100%;
+  background: #ffffff;
+  box-shadow: -4px 0 12px rgba(0,0,0,0.15);
+  padding: 20px;
+  z-index: 3000;
+  transition: right 0.3s ease;
+  border-radius: 8px 0 0 8px;
+}
+
+.panel-acciones.activo {
+  right: 0;
+}
+
+.panel-header {
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.panel-close {
+  font-size: 28px;
+  cursor: pointer;
+  float: right;
+  margin-top: -10px;
+  color: #555;
+}
+
+.panel-acciones ul {
+  list-style: none;
+  padding: 0;
+}
+
+.panel-acciones li {
+  margin-bottom: 12px;
+}
+
+.panel-acciones button {
+  width: 100%;
+  padding: 12px;
+  border-radius: 6px;
+  border: none;
+  background: #f0f0f0;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: left;
+}
+
+.panel-acciones button:hover {
+  background: #e0e0e0;
+}
+
+.btn-eliminar {
+  background: #ffe0e0 !important;
+  color: #a94442 !important;
+}
+
+.btn-eliminar:hover {
+  background: #f8caca !important;
+}
+
+/* Overlay */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.35);
+  z-index: 2500;
+  display: none;
+}
+
+.overlay.activo {
+  display: block;
+}
+</style>
+
 <main class="dashboard-main">
   <div class="dashboard-body">
 
@@ -46,19 +205,19 @@
         <legend>Datos del alumno</legend>
 
         <label>Nombre:</label>
-        <input type="text" id="nombre" placeholder="Nombre" readonly>
+        <input type="text" id="nombre" readonly>
 
         <label>Apellido paterno:</label>
-        <input type="text" id="apellido_paterno" placeholder="Apellido paterno" readonly>
+        <input type="text" id="apellido_paterno" readonly>
 
         <label>Apellido materno:</label>
-        <input type="text" id="apellido_materno" placeholder="Apellido materno" readonly>
+        <input type="text" id="apellido_materno" readonly>
 
         <label>Teléfono:</label>
-        <input type="text" id="telefono" placeholder="Teléfono" readonly>
+        <input type="text" id="telefono" readonly>
 
         <label>Correo:</label>
-        <input type="email" id="email" placeholder="Correo electrónico" readonly>
+        <input type="email" id="email" readonly>
       </fieldset>
 
       <div class="form-actions">
